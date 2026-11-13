@@ -41,9 +41,9 @@ The card reads entities by domain and device class, so it is not tied to a speci
 - **Motion sensors:** Current state and the time of the last movement.
 - **Tamper sensors and batteries:** Tamper alerts and battery levels, with a warning for low batteries.
 - **Base station:** Status entities of the base station.
-- **Siren:** Switch on and off from the card. Switching it on asks for confirmation first.
+- **Siren:** Switch on and off from the card. Both switching it on and switching it off ask for confirmation first.
 - **Cameras:** Optional camera tiles; a tap opens the camera details in Home Assistant.
-- **Volumes:** Read-only by default; a lock button enables the minus and plus buttons.
+- **Volumes:** Read-only by default; each volume has its own lock button that enables its minus and plus buttons.
 - **Settings:** Select entities such as bypass mode and sounds, changed from the popup.
 - **Edera appearance:** Automatic, Light, and Dark themes, a compact layout that adapts to the card width (wider and horizontal on large screens), rounded elements, and native Home Assistant icons.
 - **Visual configuration:** Choose entities with the native Home Assistant selectors in the dashboard editor, or add the compatible devices of a whole room at once.
@@ -86,7 +86,7 @@ The editor uses native Home Assistant entity selectors, filtered by domain and d
 
 ### Rooms in the details popup
 
-The popup groups devices by room, using the area assigned to each entity or to its device in Home Assistant. Devices without a room follow, grouped by type. The battery and the tamper sensor of the base station are listed with the base station when they belong to the same device and have no room. Tapping a row of the list opens the popup at that group.
+The popup groups devices by room, using the area assigned to each entity or to its device in Home Assistant. Devices without a room follow, grouped by type. Batteries, tamper sensors, volumes and settings that have no room are listed under the siren or the base station when they belong to the same device. Tapping a row of the list opens the popup at that group.
 
 ### Using a single module
 
@@ -100,7 +100,7 @@ If the alarm entity has no code set in Home Assistant, the keypad shows a notice
 
 ### Volumes
 
-The volumes are read-only when the card opens. Tap **Modifica** to unlock them, use the minus and plus buttons, and tap **Blocca** to lock them again.
+The volumes are read-only when the card opens. Tap the lock button on a volume to unlock only that volume, use its minus and plus buttons, and tap the lock again to lock it.
 
 ## Compatibility and Requirements
 

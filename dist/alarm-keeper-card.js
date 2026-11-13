@@ -152,7 +152,7 @@
       } else if (k === 'station') {
         it.icon = (s.attributes && s.attributes.icon) || 'mdi:router-wireless'; it.sub = fmtState(h, s);
       } else if (k === 'siren') {
-        it.on = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Attiva' : 'Spenta · chiede conferma prima di attivarla';
+        it.on = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Attiva' : 'Spenta';
       } else if (k === 'cameras') {
         it.pic = s.attributes && s.attributes.entity_picture; it.off = false; it.sub = 'Attiva';
       } else if (k === 'volumes') {
@@ -234,8 +234,8 @@
 .shell{position:relative;background:var(--hc-bg);border:1px solid var(--hc-line);border-radius:26px;padding:13px}
 .head{margin:2px 4px 12px}.eye{font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--hc-muted);margin-bottom:7px;overflow-wrap:anywhere}
 .title{font-size:23px;line-height:1.14;font-weight:800;letter-spacing:-.7px;overflow-wrap:anywhere}.title b{color:var(--hc-accent)}
-.panel{position:relative;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:24px;padding:12px;margin-bottom:10px}
-.dial{display:block;margin:0 auto 4px;max-width:100%;height:auto}.dial.tap{cursor:pointer}
+.panel{position:relative;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:24px;padding:8px 12px;margin-bottom:10px}
+.dial{display:block;margin:0 auto 4px;max-width:186px;width:100%;height:auto}.dial.tap{cursor:pointer}
 .cmds{display:flex;gap:8px;margin-top:10px}
 .cmd{flex:1;min-height:42px;border-radius:999px;border:1px solid var(--hc-line);background:var(--hc-bg);font-size:13px;font-weight:600;display:flex;gap:6px;align-items:center;justify-content:center;padding:0 8px;color:var(--hc-fg)}
 .cmd.p{background:var(--hc-accent);border-color:var(--hc-accent);color:#fff}
@@ -265,19 +265,19 @@
 .empty{padding:18px 8px;text-align:center;color:var(--hc-muted);font-size:13px}
 @container (min-width:600px){.panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:16px 28px}.panel.has-dial .dial{margin:0}.panel.has-dial .cmds{margin-top:0;flex-direction:column}.panel.has-dial .cmd{min-height:52px;font-size:14.5px}.panel.has-dial .msg{grid-column:2}  .lst{grid-template-columns:repeat(2,minmax(0,1fr))}.lst .tile:nth-child(2){border-top:0}.lst .tile:nth-child(even){border-left:1px solid var(--hc-line)}.lst .tile:last-child:nth-child(odd){grid-column:1/-1}.leg{left:28px;right:auto;width:300px}}
 /* rows */
-.row{display:flex;align-items:center;gap:10px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:16px;padding:7px 10px;min-height:50px;margin-bottom:6px;min-width:0}
-.row .rn{font-size:13px}.row .rs{font-size:11px}
+.row{display:flex;align-items:center;gap:10px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:14px;padding:5px 10px;min-height:44px;margin-bottom:5px;min-width:0}
+.row .rn{font-size:13px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.25}.row .rs{font-size:11px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.3;margin-top:1px}
 .sw{width:40px;height:23px;border-radius:12px;background:var(--hc-idle);position:relative;flex:none;border:0;padding:0}.sw::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:left .15s}
 .sw.on{background:var(--hc-accent)}.sw.on::after{left:20px}.sw.crit.on{background:var(--hc-crit-bg)}
 .lk{display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:14px;border:1px solid var(--hc-line);background:var(--hc-bg);color:var(--hc-fg);font-size:11px;font-weight:600;text-transform:none;letter-spacing:0}.lk.open{background:var(--hc-accent);border-color:var(--hc-accent);color:#fff}
 .lk ha-icon{--mdc-icon-size:14px;width:14px;height:14px}
-.rh .lk{margin-left:auto;margin-right:8px}
+.rl{flex:none;width:30px;height:30px;border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-bg);color:var(--hc-muted);display:inline-flex;align-items:center;justify-content:center;padding:0;margin-left:8px}.rl.open{background:var(--hc-accent);border-color:var(--hc-accent);color:#fff}.rl ha-icon{--mdc-icon-size:15px;width:15px;height:15px}
 .vv{font-size:13px;min-width:38px;text-align:right;font-weight:700}
 .stp{display:flex;align-items:center;gap:8px}.stp button{width:32px;height:32px;border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-bg);font-size:18px;line-height:1;color:var(--hc-fg);padding:0}.stp button[disabled]{opacity:.4}.stp strong{min-width:44px;text-align:center;font-size:13px}
 .sp{appearance:none;border:1px solid var(--hc-line);background:var(--hc-bg);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:600;width:132px;max-width:50%;flex:none;text-align:center;text-align-last:center;color:var(--hc-fg)}
 .cams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px}
 .cam{position:relative;aspect-ratio:16/10;border-radius:16px;border:1px solid var(--hc-line);overflow:hidden;display:grid;place-items:center;color:#ffffffb0;text-align:left;padding:0;background:linear-gradient(135deg,#34424b,#1b252b)}
-.cams .cam:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:16/6}
+.cams .cam:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:16/5}
 .cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam .n{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;font-weight:600;color:#fff;text-shadow:0 1px 3px #000a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cam .lv{position:absolute;right:8px;top:7px;font-size:9px;font-weight:700;letter-spacing:.8px;color:#fff;display:flex;align-items:center;gap:4px;text-shadow:0 1px 3px #000a}.cam .lv i{width:6px;height:6px;border-radius:50%;background:#4bd8a2}.cam .lv.off i{background:#e85e64}
@@ -297,8 +297,8 @@
 .chips{display:flex;gap:6px;margin-bottom:4px}
 .chip{min-height:36px;padding:0 14px;border:1px solid var(--hc-line);border-radius:999px;background:var(--hc-tile);color:var(--hc-muted);font-size:13px}
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--hc-accent) 14%,transparent);border-color:color-mix(in srgb,var(--hc-accent) 45%,transparent);color:var(--hc-fg);font-weight:600}
-.rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:17px 0 10px;font-size:13px;font-weight:600}
-.rh em{font-style:normal;font-size:11px;font-weight:600}.rh em.w{color:var(--hc-warn-fg)}.rh em.o{color:var(--hc-accent)}.rh em.c{color:var(--hc-crit-text)}
+.rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 8px;font-size:13px;font-weight:600}.rh span{font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--hc-muted)}
+.rh em{font-style:normal;font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px}.rh em.w{color:var(--hc-warn-fg);background:var(--hc-warn-bg,#f7ecc8)}.rh em.o{color:var(--hc-accent);background:color-mix(in srgb,var(--hc-accent) 14%,transparent)}.rh em.c{color:var(--hc-crit-text);background:color-mix(in srgb,var(--hc-crit-text) 14%,transparent)}
 .mrow{display:flex;gap:22px;align-items:flex-start}.mcol{flex:1 1 0;min-width:0}
 .mcol>.grp:first-child .rh,.cols>.grp:first-child .rh{margin-top:4px}
 .abig{display:flex;align-items:center;gap:12px;margin:4px 0 12px;padding:14px;border-radius:24px;background:var(--hc-tile);border:1px solid var(--hc-line)}
@@ -336,7 +336,7 @@
       this._cfg = null; this._hass = null; this._sig = null;
       this._popup = false; this._view = 'list'; this._filter = 'v'; this._focusMod = null; this._ret = '';
       this._code = ''; this._err = ''; this._busy = false; this._act = ''; this._shake = false; this._sirenId = '';
-      this._leg = false; this._vlock = true; this._volPend = {}; this._msg = ''; this._focus = '';
+      this._leg = false; this._vunl = {}; this._volPend = {}; this._msg = ''; this._focus = '';
       this._segs = null; this._histOk = false; this._histAt = 0; this._histBusy = false; this._histKey = '';
       this._onKey = (e) => this._key(e);
       this._onResize = () => { this._applyLayout(); if (this._popup) this._render(); };
@@ -403,7 +403,7 @@
 
     _signature() {
       const h = this._hass, c = this._cfg;
-      const parts = [h && h.themes && h.themes.darkMode ? 'd' : 'l', this._vlock ? 'L' : 'U', JSON.stringify(this._volPend)];
+      const parts = [h && h.themes && h.themes.darkMode ? 'd' : 'l', JSON.stringify(this._vunl), JSON.stringify(this._volPend)];
       if (c.entity) { const s = stOf(h, c.entity); parts.push('A:' + (s ? s.state + ':' + s.last_changed + ':' + (s.attributes && s.attributes.code_format) : '-')); }
       MOD_ORDER.forEach((k) => {
         const m = c.modules[k];
@@ -603,9 +603,6 @@
     _row(it, extra) {
       return '<div class="row ' + it.lv + '"><div class="ico">' + ic(it.icon) + '</div><div class="t"><div class="rn">' + esc(it.name) + '</div>' + (it.sub ? '<div class="rs">' + esc(it.sub) + '</div>' : '') + '</div>' + (extra || '') + '</div>';
     }
-    _lockBtn() {
-      return '<button type="button" class="lk ' + (this._vlock ? '' : 'open') + '" data-act="vlock" data-focus="vlock" aria-label="' + (this._vlock ? 'Sblocca la modifica dei volumi' : 'Blocca la modifica dei volumi') + '">' + ic(this._vlock ? 'mdi:lock' : 'mdi:lock-open-variant') + '<span>' + (this._vlock ? 'Modifica' : 'Blocca') + '</span></button>';
-    }
     _section(k) { return this._itemsHTML(k, this._items(k)); }
     _itemsHTML(k, items) {
       if (k === 'cameras') {
@@ -615,9 +612,11 @@
         if (k === 'siren') return this._row(it, '<button type="button" class="sw crit ' + (it.on ? 'on' : '') + '" data-act="siren" data-id="' + esc(it.id) + '" aria-label="Sirena ' + esc(it.name) + '" ' + (it.na ? 'disabled' : '') + '></button>');
         if (k === 'volumes') {
           if (it.na) return this._row(it);
-          if (this._vlock) return this._row(Object.assign({}, it, { sub: '' }), '<strong class="vv">' + esc(it.val) + '</strong>');
+          const unl = !!this._vunl[it.id];
+          const lkb = '<button type="button" class="rl ' + (unl ? 'open' : '') + '" data-act="vlock" data-id="' + esc(it.id) + '" data-focus="vl-' + esc(it.id) + '" aria-label="' + (unl ? 'Blocca la modifica di ' : 'Sblocca la modifica di ') + esc(it.name) + '">' + ic(unl ? 'mdi:lock-open-variant' : 'mdi:lock') + '</button>';
+          if (!unl) return this._row(Object.assign({}, it, { sub: '' }), '<strong class="vv">' + esc(it.val) + '</strong>' + lkb);
           const dl = Math.max(it.step, Math.round(((it.max - it.min) / 10) / it.step) * it.step);
-          return this._row(Object.assign({}, it, { sub: '' }), '<div class="stp"><button type="button" data-act="vol" data-focus="vm-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + (-dl) + '" aria-label="Diminuisci ' + esc(it.name) + '" ' + (it.num <= it.min ? 'disabled' : '') + '>−</button><strong>' + esc(it.val) + '</strong><button type="button" data-act="vol" data-focus="vp-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + dl + '" aria-label="Aumenta ' + esc(it.name) + '" ' + (it.num >= it.max ? 'disabled' : '') + '>+</button></div>');
+          return this._row(Object.assign({}, it, { sub: '' }), '<div class="stp"><button type="button" data-act="vol" data-focus="vm-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + (-dl) + '" aria-label="Diminuisci ' + esc(it.name) + '" ' + (it.num <= it.min ? 'disabled' : '') + '>−</button><strong>' + esc(it.val) + '</strong><button type="button" data-act="vol" data-focus="vp-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + dl + '" aria-label="Aumenta ' + esc(it.name) + '" ' + (it.num >= it.max ? 'disabled' : '') + '>+</button></div>' + lkb);
         }
         if (k === 'settings') {
           if (it.na || !it.options.length) return this._row(Object.assign({}, it, { sub: it.na ? it.sub : it.cur }));
@@ -635,28 +634,38 @@
       let b = '';
       const none = () => '<div class="grp"><div class="rh"><span>Tutto in ordine</span><em class="o">nessuna segnalazione</em></div>' + this._row({ lv: '', icon: 'mdi:check', name: 'Nessuna segnalazione', sub: 'Ok' }) + '</div>';
       if (this._gv === 'room' && this._hasRooms()) {
-        const bk = {}, moved = [], ent = this._hass.entities || {};
-        const devOf = (id) => (ent[id] && ent[id].device_id) || '';
-        // Without a room, battery and tamper of the base station belong with the base station (same device).
-        const stDev = {};
-        if (mods.indexOf('station') >= 0) this._cfg.modules.station.entities.forEach((id) => { if (devOf(id)) stDev[devOf(id)] = 1; });
+        const bk = {};
         mods.forEach((k) => this._items(k).forEach((it) => {
           if (filter === 'v' && !it.lv) return;
           const a = areaOf(this._hass, it.id), key = a ? a.id : '';
-          if (!a && (k === 'batteries' || k === 'tamper') && stDev[devOf(it.id)]) { moved.push(it); return; }
           (bk[key] = bk[key] || { name: a ? a.name : '', mods: {} }).mods[k] = (bk[key].mods[k] || []).concat([it]);
         }));
-        if (moved.length) { bk[''] = bk[''] || { name: '', mods: {} }; bk[''].mods.station = (bk[''].mods.station || []).concat(moved); }
         const keys = Object.keys(bk).filter((x) => x !== '').sort((x, y) => bk[x].name.localeCompare(bk[y].name, 'it'));
         if (!keys.length && !bk['']) return none();
-        const grp = (title, g, lock) => {
-          const all = [].concat.apply([], mods.filter((k) => g.mods[k]).map((k) => g.mods[k])), bad = all.filter((i) => i.lv);
-          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + (lock ? this._lockBtn() : '') + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' da verificare' : 'Tutto ok') + '</em></div>' +
-            mods.filter((k) => g.mods[k]).map((k) => filter === 'v' ? g.mods[k].map((i) => this._row(i)).join('') : this._itemsHTML(k, g.mods[k])).join('') + '</div>';
+        const grp = (title, g, lock, first) => {
+          const ord = mods.filter((k) => g.mods[k]).sort((x, y) => (x === first ? -1 : 0) - (y === first ? -1 : 0)), all = [].concat.apply([], ord.map((k) => g.mods[k])), bad = all.filter((i) => i.lv);
+          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + '' + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' da verificare' : 'Tutto ok') + '</em></div>' +
+            ord.map((k) => filter === 'v' ? g.mods[k].map((i) => this._row(i)).join('') : this._itemsHTML(k, g.mods[k])).join('') + '</div>';
         };
         keys.forEach((key) => { b += grp(bk[key].name, bk[key], !!bk[key].mods.volumes && filter !== 'v'); });
-        // Devices without a room are not a room: they follow, split by device type.
-        if (bk['']) mods.filter((k) => bk[''].mods[k]).forEach((k) => { b += grp(MODS[k].title, { mods: { [k]: bk[''].mods[k] } }, k === 'volumes' && filter !== 'v'); });
+        // Devices without a room are not a room: they follow. Battery, tamper, volumes and settings that
+        // belong to the same Home Assistant device as the siren (or the base station) are listed under it.
+        if (bk['']) {
+          const free = bk[''].mods, ent = this._hass.entities || {}, devOf = (id) => (ent[id] && ent[id].device_id) || '';
+          const dev = { siren: {}, station: {} };
+          ['siren', 'station'].forEach((an) => { if (mods.indexOf(an) >= 0) this._cfg.modules[an].entities.forEach((id) => { if (devOf(id)) dev[an][devOf(id)] = 1; }); });
+          const sub = { siren: {}, station: {} }, rest = {};
+          Object.keys(free).forEach((m) => free[m].forEach((it) => {
+            const d = devOf(it.id), an = ['batteries', 'tamper', 'volumes', 'settings'].indexOf(m) >= 0 && d ? (dev.siren[d] ? 'siren' : dev.station[d] ? 'station' : '') : '';
+            if (an) sub[an][m] = (sub[an][m] || []).concat([it]); else rest[m] = (rest[m] || []).concat([it]);
+          }));
+          mods.forEach((k) => {
+            const g = { mods: {} };
+            if (rest[k]) g.mods[k] = rest[k];
+            if (sub[k]) Object.keys(sub[k]).forEach((m) => { g.mods[m] = sub[k][m]; });
+            if (Object.keys(g.mods).length) b += grp(MODS[k].title, g, !!g.mods.volumes && filter !== 'v', k);
+          });
+        }
         return b;
       }
       if (filter === 'v') {
@@ -671,7 +680,7 @@
       }
       mods.forEach((k) => {
         const s = summaryOf(k, this._items(k));
-        b += '<div class="grp" data-mod="' + k + '"><div class="rh"><span>' + esc(MODS[k].title) + '</span>' + (k === 'volumes' ? this._lockBtn() : '') + '<em class="' + (s.lv === 'ok' ? 'o' : s.lv === 'crit' ? 'c' : 'w') + '">' + esc(s.t) + '</em></div>' + this._section(k) + '</div>';
+        b += '<div class="grp" data-mod="' + k + '"><div class="rh"><span>' + esc(MODS[k].title) + '</span>' + '<em class="' + (s.lv === 'ok' ? 'o' : s.lv === 'crit' ? 'c' : 'w') + '">' + esc(s.t) + '</em></div>' + this._section(k) + '</div>';
       });
       return b;
     }
@@ -684,7 +693,8 @@
         return '<dialog class="ov" data-act="ovclose" aria-label="Dettagli e stato"><div class="dlg"><div class="mh"><h2 class="mt">Dettagli e stato</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></dialog>';
       }
       if (this._view === 'siren') {
-        return '<dialog class="ov" data-act="ovclose" aria-label="Attivare la sirena"><div class="dlg small"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>Attivare la sirena?</h3><p>La sirena suonerà subito. Potrai spegnerla da qui.</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annulla</button><button type="button" class="cmd c" data-act="siren-yes" data-focus="yes">Attiva sirena</button></div></div></div></dialog>';
+        const so = !!this._sirenOff;
+        return '<dialog class="ov" data-act="ovclose" aria-label="' + (so ? 'Spegnere la sirena' : 'Attivare la sirena') + '"><div class="dlg small"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>' + (so ? 'Spegnere la sirena?' : 'Attivare la sirena?') + '</h3><p>' + (so ? 'La sirena verrà spenta subito.' : 'La sirena suonerà subito. Potrai spegnerla da qui.') + '</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annulla</button><button type="button" class="cmd ' + (so ? 'p' : 'c') + '" data-act="siren-yes" data-focus="yes">' + (so ? 'Spegni sirena' : 'Attiva sirena') + '</button></div></div></div></dialog>';
       }
       // keypad
       const mode = alarmMode(st ? st.state : ''), need = this._needsCode(st), text = st && st.attributes && st.attributes.code_format === 'text';
@@ -749,7 +759,7 @@
       } else {
         if (!mods.length) h += '<div class="empty">Nessun modulo con entità: scegli le entità dalla configurazione della card.</div>';
         mods.forEach((k) => {
-          h += (mods.length > 1 || k === 'volumes' ? '<div class="lab lkrow"><span>' + (mods.length > 1 ? esc(MODS[k].title) : (this._vlock ? 'Sola lettura' : 'Modifica attiva')) + '</span>' + (k === 'volumes' ? this._lockBtn() : '') + '</div>' : '') + this._section(k);
+          h += (mods.length > 1 ? '<div class="lab">' + esc(MODS[k].title) + '</div>' : '') + this._section(k);
         });
       }
       h += '</div>';
@@ -824,7 +834,7 @@
       if (a === 'key') { if (this._code.length < 12 && !this._busy) { this._code += t.dataset.k; this._err = ''; this._focus = ''; this._render(); } return; }
       if (a === 'back') { this._code = this._code.slice(0, -1); this._err = ''; this._render(); return; }
       if (a === 'submit') { this._submit(); return; }
-      if (a === 'vlock') { this._vlock = !this._vlock; this._focus = 'vlock'; this._sig = null; this._render(); return; }
+      if (a === 'vlock') { const vid = t.dataset.id; this._vunl[vid] = !this._vunl[vid]; this._focus = 'vl-' + vid; this._sig = null; this._render(); return; }
       if (a === 'vol') {
         const id = t.dataset.id, s = stOf(hass, id); if (!s) return;
         const at = s.attributes || {}, mn = isNum(at.min) ? Number(at.min) : 0, mx = isNum(at.max) ? Number(at.max) : 100;
@@ -839,11 +849,11 @@
       if (a === 'siren-tile' || a === 'siren') {
         const id = t.dataset.id || (this._cfg.modules.siren.entities.find((i) => { const s = stOf(hass, i); return s && s.state === 'on'; }) || this._cfg.modules.siren.entities[0]);
         const s = stOf(hass, id); if (!s || missing(s)) return;
-        if (s.state === 'on') this._call(id.split('.')[0], 'turn_off', { entity_id: id }, 'Sirena non spenta.');
-        else this._openSiren(id);
+        this._sirenOff = s.state === 'on';
+        this._openSiren(id);
         return;
       }
-      if (a === 'siren-yes') { const id = this._sirenId; this._closePopup(true); this._call(id.split('.')[0], 'turn_on', { entity_id: id }, 'Sirena non attivata.'); return; }
+      if (a === 'siren-yes') { const id = this._sirenId, off = this._sirenOff; this._closePopup(true); this._call(id.split('.')[0], off ? 'turn_off' : 'turn_on', { entity_id: id }, off ? 'Sirena non spenta.' : 'Sirena non attivata.'); return; }
       if (a === 'cam') { const id = t.dataset.id; if (this._popup) this._closePopup(true); this.dispatchEvent(new CustomEvent('hass-more-info', { detail: { entityId: id }, bubbles: true, composed: true })); }
     }
     _change(e) {

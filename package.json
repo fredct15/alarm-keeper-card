@@ -1,0 +1,12 @@
+{
+  "name": "alarm-keeper-card",
+  "version": "1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check src/alarm-keeper-card.js && node --check dist/alarm-keeper-card.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -9,7 +9,7 @@
 
 **Alarm Keeper Card** is a custom alarm card for Home Assistant, designed with a minimalist, responsive interface inspired by the Edera Light and Dark visual styles.
 
-A 12-hour clock shows how long the alarm has been armed today: green while armed at home, blue while armed away and yellow while not armed. Below it you can arm and disarm the alarm, and a grid of tiles summarises doors, windows, motion sensors, batteries, cameras and the siren. The details popup lists every entity and shows what needs attention first.
+A 12-hour clock shows how long the alarm has been armed today: green while armed at home, blue while armed away and yellow while not armed. Below it you can arm and disarm the alarm, and a list summarises doors, windows, motion sensors, batteries, cameras and the siren. The details popup lists every entity by room and shows what needs attention first.
 
 The card is modular. Doors, windows, motion sensors, tamper sensors, batteries, the base station, the siren, cameras, volumes and settings are separate modules: use them all together, or add a single one to a dashboard on its own. A module without entities does not appear.
 
@@ -33,10 +33,10 @@ The card reads entities by domain and device class, so it is not tied to a speci
 
 - **Activity clock:** A 12-hour dial that covers the hours of the day so far: green for armed at home, blue for armed away and yellow for not armed, with a marker on the current time. Tap the dial to see the colour legend and the total time armed today.
 - **Arm and disarm:** **Home**, **Away** and **Disarm** buttons. Commands can be turned off in the editor, leaving a read-only panel.
-- **Code keypad:** Disarming always asks for the code on a keypad. The code is typed every time, sent to Home Assistant and never stored in the card or in its settings.
+- **Code keypad:** Disarming always asks for the code on a numeric keypad with round keys, like a phone keypad. The code is typed every time, sent to Home Assistant and never stored in the card or in its settings.
 - **Modular:** Ten modules, each usable on its own or together in the full card.
-- **Tile grid:** Tiles with a short status for each module, composed by default and adjustable in the editor.
-- **Details popup:** Fixed-height popup with filters for the items to check (shown first) and for all items. On tablets and desktop it uses a wide layout with columns.
+- **Summary list:** One row for each module with a short status, composed by default and adjustable in the editor. Tap a row to open its group in the details popup.
+- **Details popup:** Fixed-height popup, centred on the screen, with filters for the items to check (shown first) and for all items. Devices are grouped by room, using the rooms assigned in Home Assistant; devices without a room follow, grouped by type. On tablets and desktop it uses a wide layout with columns.
 - **Doors and windows:** Open or closed, with the time since the last change.
 - **Motion sensors:** Current state and the time of the last movement.
 - **Tamper sensors and batteries:** Tamper alerts and battery levels, with a warning for low batteries.
@@ -46,7 +46,7 @@ The card reads entities by domain and device class, so it is not tied to a speci
 - **Volumes:** Read-only by default; a lock button enables the minus and plus buttons.
 - **Settings:** Select entities such as bypass mode and sounds, changed from the popup.
 - **Edera appearance:** Automatic, Light, and Dark themes, a compact layout that adapts to the card width (wider and horizontal on large screens), rounded elements, and native Home Assistant icons.
-- **Visual configuration:** Choose entities with the native Home Assistant selectors in the dashboard editor.
+- **Visual configuration:** Choose entities with the native Home Assistant selectors in the dashboard editor, or add the compatible devices of a whole room at once.
 
 Unavailable or unknown entities are always reported as not available and never counted as in order.
 
@@ -79,10 +79,14 @@ If the `www` directory was newly created, Home Assistant may require a restart b
 Open a dashboard in edit mode, add **Alarm Keeper Card**, and configure the available sections:
 
 - **Allarme:** The alarm entity, the alarm panel, the commands, the legend and the optional clock hands.
-- **Moduli:** For each module, whether it is active, whether it has a tile in the grid, its entities and its position.
+- **Moduli:** For each module, whether it is active, whether it has a row in the list, its entities and its position. For doors, windows, motion sensors, batteries, tamper sensors and cameras, **Aggiungi da stanza** adds the compatible devices of a room in one step; it lists only rooms that have compatible devices not yet added.
 - **Aspetto:** Header, title and theme.
 
 The editor uses native Home Assistant entity selectors, filtered by domain and device class for each module.
+
+### Rooms in the details popup
+
+The popup groups devices by room, using the area assigned to each entity or to its device in Home Assistant. Devices without a room follow, grouped by type. The battery and the tamper sensor of the base station are listed with the base station when they belong to the same device and have no room. Tapping a row of the list opens the popup at that group.
 
 ### Using a single module
 
@@ -110,6 +114,8 @@ Alarm Keeper Card requires:
 Supported entity types: `alarm_control_panel`, `binary_sensor` (door, garage door, window, opening, motion, occupancy, presence, tamper, battery), `sensor` (battery and station information), `switch` or `siren`, `camera`, `number` and `select`.
 
 The card uses the standard Home Assistant services: `alarm_control_panel.alarm_disarm`, `alarm_arm_home` and `alarm_arm_away`, `switch.turn_on` and `turn_off` (or the same for `siren`), `number.set_value` and `select.select_option`.
+
+Rooms are read from the Home Assistant area and device registries. If no device has a room, the popup groups everything by type.
 
 The card interface is currently in Italian.
 

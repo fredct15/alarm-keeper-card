@@ -26,6 +26,7 @@
     volumes:   { title: 'Volumi',      short: 'Volumi',      icon: 'mdi:volume-high',        help: 'Volume della sirena e della tastiera. Sola lettura, si modifica con il lucchetto.', sel: { filter: [{ domain: 'number' }] }, tile: false },
     settings:  { title: 'Impostazioni', short: 'Impostazioni', icon: 'mdi:tune',             help: 'Modalità di esclusione, suoni e altre scelte.', sel: { filter: [{ domain: 'select' }] },                                                                    tile: false }
   };
+  const ROOM_MODS = ['doors', 'windows', 'motion', 'batteries', 'tamper', 'cameras'];
   const MOD_ORDER = ['doors', 'windows', 'motion', 'batteries', 'cameras', 'siren', 'tamper', 'station', 'volumes', 'settings'];
 
   const DEFAULTS = {
@@ -93,6 +94,17 @@
   /* -------------------------------------------------------- entity logic */
   const stOf = (h, id) => (h && h.states ? h.states[id] : undefined);
   const missing = (s) => !s || s.state === 'unavailable' || s.state === 'unknown';
+  // Room of an entity: its own area, otherwise the area of its device (Home Assistant registries).
+  function areaOf(h, id) {
+    if (!h || !h.entities) return null;
+    const e = h.entities[id];
+    if (!e) return null;
+    let aid = e.area_id;
+    if (!aid && e.device_id && h.devices && h.devices[e.device_id]) aid = h.devices[e.device_id].area_id;
+    if (!aid) return null;
+    const a = h.areas && h.areas[aid];
+    return { id: aid, name: (a && a.name) || aid };
+  }
   const nameOf = (s, id) => (s && s.attributes && s.attributes.friendly_name) || id;
 
   function alarmMode(state) {
@@ -217,7 +229,7 @@
 .hc[data-mode="dark"]{--hc-accent:#0e795d;--hc-bg:#101211;--hc-tile:#191c1a;--hc-circle:#282b29;--hc-line:#2b302c;--hc-fg:#f5f7f4;--hc-muted:#bbc5bd;--hc-btn-fg:#f5f7f4;--hc-warn-bg:#302b1b;--hc-warn-bd:#816e31;--hc-warn-fg:#f1d78b;--hc-crit-text:#e85e64;--hc-idle:#8B918E}
 .hc :where(button,select,input){font:inherit;color:inherit}
 .hc button{cursor:pointer}
-.hc ha-icon{display:block;flex:none;--mdc-icon-size:18px;width:18px;height:18px}
+.hc ha-icon{display:flex;align-items:center;justify-content:center;line-height:0;flex:none;--mdc-icon-size:18px;width:18px;height:18px}
 .cardw{container-type:inline-size;min-width:0}
 .shell{position:relative;background:var(--hc-bg);border:1px solid var(--hc-line);border-radius:26px;padding:13px}
 .head{margin:2px 4px 12px}.eye{font-size:10px;letter-spacing:1.7px;font-weight:750;color:var(--hc-muted);margin-bottom:7px;overflow-wrap:anywhere}
@@ -233,9 +245,12 @@
 .lab{margin:14px 4px 8px;color:var(--hc-muted);font-size:10px;letter-spacing:1.3px;font-weight:600;text-transform:uppercase}
 .lab:first-child{margin-top:0}
 .lkrow{display:flex;align-items:center;justify-content:space-between}
-.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.tile{display:flex;align-items:center;gap:8px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:16px;padding:8px;min-height:50px;text-align:left;width:100%;min-width:0;color:var(--hc-fg)}
-.ico{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--hc-circle);flex:none;color:var(--hc-accent);--mdc-icon-size:16px}
+.lst{display:grid;grid-template-columns:minmax(0,1fr);background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:20px;overflow:hidden}
+.tile{display:flex;align-items:center;gap:10px;background:transparent;border:0;border-top:1px solid var(--hc-line);border-radius:0;padding:8px 12px;min-height:50px;text-align:left;width:100%;min-width:0;color:var(--hc-fg)}
+.tile:first-child{border-top:0}
+.tile .t{flex:1}.tile .st{flex:none;max-width:50%;margin:0;font-size:12px;text-align:right;color:var(--hc-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tile.warn .st{color:var(--hc-warn-fg);font-weight:600}.tile.crit .st{color:var(--hc-crit-text);font-weight:600}
+.tile .chev{color:var(--hc-muted);--mdc-icon-size:18px}
+.ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:0;background:var(--hc-circle);flex:none;color:var(--hc-accent);--mdc-icon-size:16px}
 .ico ha-icon{--mdc-icon-size:16px;width:16px;height:16px}
 .warn>.ico{background:var(--hc-warn-bg);box-shadow:inset 0 0 0 1px var(--hc-warn-bd);color:var(--hc-warn-fg)}
 .crit>.ico{background:var(--hc-crit-bg);color:#fff}
@@ -248,8 +263,7 @@
 .leg b{display:block;font-size:15px;margin-bottom:8px}.leg .l{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--hc-muted);margin-bottom:8px}.leg .l span{display:inline-flex;align-items:center;gap:6px}.leg i{width:9px;height:9px;border-radius:50%;display:inline-block}.leg p{margin:0;font-size:11px;color:var(--hc-muted)}
 .note{margin:6px 4px 12px;font-size:12px;color:var(--hc-muted)}
 .empty{padding:18px 8px;text-align:center;color:var(--hc-muted);font-size:13px}
-@container (min-width:440px){.grid{grid-template-columns:repeat(var(--g3,3),minmax(0,1fr))}}
-@container (min-width:600px){.panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:16px 28px}.panel.has-dial .dial{margin:0}.panel.has-dial .cmds{margin-top:0;flex-direction:column}.panel.has-dial .cmd{min-height:52px;font-size:14.5px}.panel.has-dial .msg{grid-column:2}  .grid{grid-template-columns:repeat(var(--g4,4),minmax(0,1fr))}.leg{left:28px;right:auto;width:300px}}
+@container (min-width:600px){.panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:16px 28px}.panel.has-dial .dial{margin:0}.panel.has-dial .cmds{margin-top:0;flex-direction:column}.panel.has-dial .cmd{min-height:52px;font-size:14.5px}.panel.has-dial .msg{grid-column:2}  .lst{grid-template-columns:repeat(2,minmax(0,1fr))}.lst .tile:nth-child(2){border-top:0}.lst .tile:nth-child(even){border-left:1px solid var(--hc-line)}.lst .tile:last-child:nth-child(odd){grid-column:1/-1}.leg{left:28px;right:auto;width:300px}}
 /* rows */
 .row{display:flex;align-items:center;gap:10px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:16px;padding:7px 10px;min-height:50px;margin-bottom:6px;min-width:0}
 .row .rn{font-size:13px}.row .rs{font-size:11px}
@@ -260,15 +274,17 @@
 .rh .lk{margin-left:auto;margin-right:8px}
 .vv{font-size:13px;min-width:38px;text-align:right;font-weight:700}
 .stp{display:flex;align-items:center;gap:8px}.stp button{width:32px;height:32px;border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-bg);font-size:18px;line-height:1;color:var(--hc-fg);padding:0}.stp button[disabled]{opacity:.4}.stp strong{min-width:44px;text-align:center;font-size:13px}
-.sp{appearance:none;border:1px solid var(--hc-line);background:var(--hc-bg);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:600;max-width:55%;color:var(--hc-fg)}
+.sp{appearance:none;border:1px solid var(--hc-line);background:var(--hc-bg);border-radius:999px;padding:7px 12px;font-size:12.5px;font-weight:600;width:132px;max-width:50%;flex:none;text-align:center;text-align-last:center;color:var(--hc-fg)}
 .cams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:6px}
 .cam{position:relative;aspect-ratio:16/10;border-radius:16px;border:1px solid var(--hc-line);overflow:hidden;display:grid;place-items:center;color:#ffffffb0;text-align:left;padding:0;background:linear-gradient(135deg,#34424b,#1b252b)}
+.cams .cam:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:16/6}
 .cam img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .cam .n{position:absolute;left:8px;bottom:6px;right:8px;font-size:11.5px;font-weight:600;color:#fff;text-shadow:0 1px 3px #000a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cam .lv{position:absolute;right:8px;top:7px;font-size:9px;font-weight:700;letter-spacing:.8px;color:#fff;display:flex;align-items:center;gap:4px;text-shadow:0 1px 3px #000a}.cam .lv i{width:6px;height:6px;border-radius:50%;background:#4bd8a2}.cam .lv.off i{background:#e85e64}
 .cam ha-icon{--mdc-icon-size:30px;width:30px;height:30px}
 /* popup */
-.ov{position:fixed;inset:0;z-index:9999;overscroll-behavior:contain;background:#0009;display:flex;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.ov{position:fixed;inset:0;margin:0;width:100%;height:100%;max-width:none;max-height:none;border:0;z-index:9999;overscroll-behavior:contain;overflow:hidden;color:inherit;background:#0009;align-items:center;justify-content:center;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.ov:not([open]){display:none}.ov[open]{display:flex}.ov::backdrop{background:transparent}
 .dlg{width:min(390px,100%);max-width:100%;min-width:0;align-self:center;height:min(calc(100vh - 40px),680px);height:min(calc(100dvh - 40px),680px);display:flex;flex-direction:column;background:var(--hc-bg);color:var(--hc-fg);border:1px solid var(--hc-line);border-radius:26px;overflow:hidden;box-shadow:0 18px 60px #0005}
 :host([data-popup="wide"]) .dlg{width:min(1120px,100%);height:min(80vh,560px);height:min(80dvh,560px)}
 .dlg.small,:host([data-popup="wide"]) .dlg.small{width:min(390px,100%);height:auto;max-height:min(calc(100vh - 32px),680px);max-height:min(calc(100dvh - 32px),680px)}
@@ -292,12 +308,15 @@
 .ast{display:flex;gap:8px;margin-bottom:14px}.ast>div{flex:1;padding:10px 12px;border-radius:16px;background:var(--hc-tile);border:1px solid var(--hc-line)}.ast span{display:block;font-size:11px;color:var(--hc-muted)}.ast b{display:block;margin-top:3px;font-size:13px}
 .lbl{margin:0 4px 8px;color:var(--hc-muted);font-size:10px;letter-spacing:1.3px;font-weight:600;text-transform:uppercase;text-align:center}
 .warnt{margin:0 0 12px;padding:9px 12px;border-radius:14px;background:var(--hc-warn-bg);border:1px solid var(--hc-warn-bd);color:var(--hc-warn-fg);font-size:12px;text-align:center}
-.dotrow{position:relative;display:flex;justify-content:center;align-items:center;min-height:40px}
+.dotrow{display:flex;justify-content:center;align-items:center;min-height:28px;margin-bottom:4px}
 .dots{display:flex;gap:12px;justify-content:center;min-height:14px}.dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--hc-muted)}.dots i.f{background:var(--hc-fg);border-color:var(--hc-fg)}
-.bk{position:absolute;right:0;width:40px;height:40px;border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-tile);display:grid;place-items:center;color:var(--hc-fg);padding:0}
 .err{text-align:center;color:var(--hc-crit-text);font-size:12.5px;font-weight:600;min-height:18px;margin:2px 0 6px}
-.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.keys button{min-height:48px;border-radius:14px;border:1px solid var(--hc-line);background:var(--hc-tile);font-size:18px;font-weight:600;display:grid;place-items:center;color:var(--hc-fg)}
-.keys .z{grid-column:1/-1}
+.keys{--ks:64px;display:grid;grid-template-columns:repeat(3,var(--ks));gap:10px 18px;justify-content:center;margin:4px 0 14px}
+.keys button{width:var(--ks);height:var(--ks);border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-tile);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:var(--hc-fg);-webkit-tap-highlight-color:transparent}
+.keys button:active{background:var(--hc-line)}
+.keys b{font-size:26px;font-weight:400;letter-spacing:0}.keys small{display:block;min-height:9px;margin-top:2px;font-size:9px;font-weight:600;letter-spacing:2px;text-indent:2px;color:var(--hc-muted)}
+.keys .bk{border-color:transparent;background:transparent}.keys .bk ha-icon{--mdc-icon-size:26px;width:26px;height:26px}.keys .bk[disabled]{opacity:.35;cursor:default}
+@media (max-height:720px){.keys{--ks:56px;gap:8px 16px}.keys b{font-size:23px}}
 .code{display:block;width:100%;min-height:46px;margin:0 0 12px;padding:0 14px;border-radius:14px;border:1px solid var(--hc-line);background:var(--hc-tile);color:var(--hc-fg);font-size:16px}
 .acta{display:block;width:100%;min-height:46px;border-radius:999px;background:var(--hc-accent);color:#fff;border:0;font-size:14px;font-weight:600}.acta[disabled]{opacity:.45;cursor:default}
 .acta.c{background:var(--hc-crit-bg)}
@@ -485,11 +504,12 @@
         const hh = P(32, n % 12), mm = P(46, ((n % 1) * 60) / 5);
         a += '<line x1="' + cx + '" y1="' + cy + '" x2="' + hh[0] + '" y2="' + hh[1] + '" stroke="var(--hc-fg)" stroke-width="4" stroke-linecap="round" opacity=".85"/><line x1="' + cx + '" y1="' + cy + '" x2="' + mm[0] + '" y2="' + mm[1] + '" stroke="var(--hc-fg)" stroke-width="2.5" stroke-linecap="round" opacity=".85"/><circle cx="' + cx + '" cy="' + cy + '" r="5" fill="var(--hc-fg)"/>';
       }
-      const py = cfg.hands ? 116 : 92;
-      a += '<rect x="44" y="' + py + '" width="112" height="40" rx="14" fill="var(--hc-tile)" opacity=".94"/><circle cx="' + (cx - 42) + '" cy="' + (py + 20) + '" r="11" fill="' + M.o + '"' + (M.ring ? ' stroke="' + M.ring + '" stroke-width="1.5"' : '') + '/>' +
-        '<g transform="translate(' + (cx - 42 - 7.2) + ',' + (py + 20 - 7.2) + ') scale(.6)" fill="' + M.f + '"><path d="' + M.p + '"/></g>' +
-        '<text x="' + (cx + 8) + '" y="' + (py + (sub ? 18 : 25)) + '" text-anchor="middle" font-size="12" font-weight="700" fill="var(--hc-fg)" font-family="Roboto,Arial,sans-serif">' + M.l + '</text>' +
-        (sub ? '<text x="' + (cx + 8) + '" y="' + (py + 32) + '" text-anchor="middle" font-size="9.5" fill="var(--hc-muted)" font-family="Roboto,Arial,sans-serif">' + esc(sub) + '</text>' : '');
+      const hd = cfg.hands, ry = hd ? 108 : 58, rh = hd ? 48 : 84, ir = hd ? 8 : 13, iy = hd ? 121 : 80, ly = hd ? 140 : 115, sy = hd ? 151 : 131;
+      const ks = ir * 2 * 0.65 / 24, lsz = M.l.length > 11 ? 12 : hd ? 12 : 14;
+      a += '<rect x="46" y="' + ry + '" width="108" height="' + rh + '" rx="16" fill="var(--hc-tile)" opacity=".94"/><circle cx="' + cx + '" cy="' + iy + '" r="' + ir + '" fill="' + M.o + '"' + (M.ring ? ' stroke="' + M.ring + '" stroke-width="1.5"' : '') + '/>' +
+        '<g transform="translate(' + (cx - 12 * ks).toFixed(2) + ',' + (iy - 12 * ks).toFixed(2) + ') scale(' + ks.toFixed(3) + ')" fill="' + M.f + '"><path d="' + M.p + '"/></g>' +
+        '<text x="' + cx + '" y="' + (sub ? ly : ly + 4) + '" text-anchor="middle" font-size="' + lsz + '" font-weight="700" fill="var(--hc-fg)" font-family="Roboto,Arial,sans-serif">' + M.l + '</text>' +
+        (sub ? '<text x="' + cx + '" y="' + sy + '" text-anchor="middle" font-size="9.5" fill="var(--hc-muted)" font-family="Roboto,Arial,sans-serif">' + esc(sub) + '</text>' : '');
       return '<svg class="dial' + (cfg.legend ? ' tap' : '') + '" ' + (cfg.legend ? 'data-act="leg" role="button" tabindex="0" ' : 'role="img" ') + 'aria-label="Quadrante dell’allarme: ' + M.l + '" width="200" height="200" viewBox="0 0 200 200">' + a + '</svg>';
     }
 
@@ -555,7 +575,7 @@
 
     _openDetails(mod) {
       const issues = this._allIssues();
-      this._view = 'details'; this._filter = issues ? 'v' : 'a'; this._focusMod = mod || null;
+      this._view = 'details'; this._filter = issues ? 'v' : 'a'; this._focusMod = mod || null; this._gv = mod ? 'type' : 'room';
       if (mod) this._filter = 'a';
       this._ret = mod ? 'tile-' + mod : 'details'; this._popup = true; this._focus = 'close';
       document.addEventListener('keydown', this._onKey, true);
@@ -586,8 +606,8 @@
     _lockBtn() {
       return '<button type="button" class="lk ' + (this._vlock ? '' : 'open') + '" data-act="vlock" data-focus="vlock" aria-label="' + (this._vlock ? 'Sblocca la modifica dei volumi' : 'Blocca la modifica dei volumi') + '">' + ic(this._vlock ? 'mdi:lock' : 'mdi:lock-open-variant') + '<span>' + (this._vlock ? 'Modifica' : 'Blocca') + '</span></button>';
     }
-    _section(k) {
-      const items = this._items(k);
+    _section(k) { return this._itemsHTML(k, this._items(k)); }
+    _itemsHTML(k, items) {
       if (k === 'cameras') {
         return '<div class="cams">' + items.map((it) => '<button type="button" class="cam" data-act="cam" data-id="' + esc(it.id) + '" aria-label="' + esc(it.name) + '">' + (it.pic && !it.off ? '<img src="' + esc(it.pic) + '" alt="" loading="lazy">' : ic('mdi:cctv')) + '<span class="lv ' + (it.off ? 'off' : '') + '"><i></i>' + (it.off ? 'OFFLINE' : 'LIVE') + '</span><span class="n">' + esc(it.name) + '</span></button>').join('') + '</div>';
       }
@@ -607,9 +627,38 @@
       }).join('');
     }
 
+    _hasRooms() {
+      return this._mods().some((k) => this._items(k).some((it) => areaOf(this._hass, it.id)));
+    }
     _groupsHTML(filter) {
       const mods = this._mods();
       let b = '';
+      const none = () => '<div class="grp"><div class="rh"><span>Tutto in ordine</span><em class="o">nessuna segnalazione</em></div>' + this._row({ lv: '', icon: 'mdi:check', name: 'Nessuna segnalazione', sub: 'Ok' }) + '</div>';
+      if (this._gv === 'room' && this._hasRooms()) {
+        const bk = {}, moved = [], ent = this._hass.entities || {};
+        const devOf = (id) => (ent[id] && ent[id].device_id) || '';
+        // Without a room, battery and tamper of the base station belong with the base station (same device).
+        const stDev = {};
+        if (mods.indexOf('station') >= 0) this._cfg.modules.station.entities.forEach((id) => { if (devOf(id)) stDev[devOf(id)] = 1; });
+        mods.forEach((k) => this._items(k).forEach((it) => {
+          if (filter === 'v' && !it.lv) return;
+          const a = areaOf(this._hass, it.id), key = a ? a.id : '';
+          if (!a && (k === 'batteries' || k === 'tamper') && stDev[devOf(it.id)]) { moved.push(it); return; }
+          (bk[key] = bk[key] || { name: a ? a.name : '', mods: {} }).mods[k] = (bk[key].mods[k] || []).concat([it]);
+        }));
+        if (moved.length) { bk[''] = bk[''] || { name: '', mods: {} }; bk[''].mods.station = (bk[''].mods.station || []).concat(moved); }
+        const keys = Object.keys(bk).filter((x) => x !== '').sort((x, y) => bk[x].name.localeCompare(bk[y].name, 'it'));
+        if (!keys.length && !bk['']) return none();
+        const grp = (title, g, lock) => {
+          const all = [].concat.apply([], mods.filter((k) => g.mods[k]).map((k) => g.mods[k])), bad = all.filter((i) => i.lv);
+          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + (lock ? this._lockBtn() : '') + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' da verificare' : 'Tutto ok') + '</em></div>' +
+            mods.filter((k) => g.mods[k]).map((k) => filter === 'v' ? g.mods[k].map((i) => this._row(i)).join('') : this._itemsHTML(k, g.mods[k])).join('') + '</div>';
+        };
+        keys.forEach((key) => { b += grp(bk[key].name, bk[key], !!bk[key].mods.volumes && filter !== 'v'); });
+        // Devices without a room are not a room: they follow, split by device type.
+        if (bk['']) mods.filter((k) => bk[''].mods[k]).forEach((k) => { b += grp(MODS[k].title, { mods: { [k]: bk[''].mods[k] } }, k === 'volumes' && filter !== 'v'); });
+        return b;
+      }
       if (filter === 'v') {
         let any = false;
         mods.forEach((k) => {
@@ -618,8 +667,7 @@
           any = true;
           b += '<div class="grp"><div class="rh"><span>' + esc(MODS[k].title) + '</span><em class="' + (L.some((i) => i.lv === 'crit') ? 'c' : 'w') + '">' + L.length + ' da verificare</em></div>' + L.map((i) => this._row(i)).join('') + '</div>';
         });
-        if (!any) b += '<div class="grp"><div class="rh"><span>Tutto in ordine</span><em class="o">nessuna segnalazione</em></div>' + this._row({ lv: '', icon: 'mdi:check', name: 'Nessuna segnalazione', sub: 'Ok' }) + '</div>';
-        return b;
+        return any ? b : none();
       }
       mods.forEach((k) => {
         const s = summaryOf(k, this._items(k));
@@ -633,10 +681,10 @@
       const st = stOf(this._hass, this._cfg.entity);
       if (this._view === 'details') {
         const chips = '<div class="chips"><button type="button" class="chip" data-filter="v" aria-pressed="' + (this._filter === 'v') + '" data-focus="fv">Da verificare</button><button type="button" class="chip" data-filter="a" aria-pressed="' + (this._filter === 'a') + '" data-focus="fa">Tutti</button></div>';
-        return '<div class="ov" data-act="ovclose"><div class="dlg" role="dialog" aria-modal="true" aria-label="Dettagli e stato"><div class="mh"><h2 class="mt">Dettagli e stato</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></div>';
+        return '<dialog class="ov" data-act="ovclose" aria-label="Dettagli e stato"><div class="dlg"><div class="mh"><h2 class="mt">Dettagli e stato</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></dialog>';
       }
       if (this._view === 'siren') {
-        return '<div class="ov" data-act="ovclose"><div class="dlg small" role="dialog" aria-modal="true" aria-label="Attivare la sirena"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>Attivare la sirena?</h3><p>La sirena suonerà subito. Potrai spegnerla da qui.</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annulla</button><button type="button" class="cmd c" data-act="siren-yes" data-focus="yes">Attiva sirena</button></div></div></div></div>';
+        return '<dialog class="ov" data-act="ovclose" aria-label="Attivare la sirena"><div class="dlg small"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>Attivare la sirena?</h3><p>La sirena suonerà subito. Potrai spegnerla da qui.</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annulla</button><button type="button" class="cmd c" data-act="siren-yes" data-focus="yes">Attiva sirena</button></div></div></div></dialog>';
       }
       // keypad
       const mode = alarmMode(st ? st.state : ''), need = this._needsCode(st), text = st && st.attributes && st.attributes.code_format === 'text';
@@ -649,16 +697,18 @@
       const sz = this._wide() ? ' small' : '';
       let input;
       if (text) input = '<input class="code" type="password" id="code" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Codice" value="' + esc(this._code) + '" data-focus="code">';
-      else input = '<div class="dotrow"><div class="dots ' + (this._shake ? 'shake' : '') + '" id="dots">' + Array.from({ length: dots }, (_, i) => '<i class="' + (i < this._code.length ? 'f' : '') + '"></i>').join('') + '</div><button type="button" class="bk" data-act="back" aria-label="Cancella l’ultima cifra">' + ic('mdi:backspace-outline') + '</button></div>';
-      const keys = text ? '' : '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => '<button type="button" data-act="key" data-k="' + k + '">' + k + '</button>').join('') + '<button type="button" class="z" data-act="key" data-k="0">0</button></div>';
+      else input = '<div class="dotrow"><div class="dots ' + (this._shake ? 'shake' : '') + '" id="dots">' + Array.from({ length: dots }, (_, i) => '<i class="' + (i < this._code.length ? 'f' : '') + '"></i>').join('') + '</div></div>';
+      const LET = { 2: 'ABC', 3: 'DEF', 4: 'GHI', 5: 'JKL', 6: 'MNO', 7: 'PQRS', 8: 'TUV', 9: 'WXYZ' };
+      const kb = (k) => '<button type="button" data-act="key" data-k="' + k + '" aria-label="' + k + '"><b>' + k + '</b><small>' + (LET[k] || '') + '</small></button>';
+      const keys = text ? '' : '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(kb).join('') + '<span></span>' + kb(0) + '<button type="button" class="bk" data-act="back" aria-label="Cancella l’ultima cifra" ' + (this._code ? '' : 'disabled') + '>' + ic('mdi:backspace-outline') + '</button></div>';
       const label = this._act === 'disarm' ? 'Disattiva allarme' : this._act === 'arm_home' ? 'Inserisci in casa' : 'Inserisci fuori casa';
-      return '<div class="ov" data-act="ovclose"><div class="dlg' + sz + '" role="dialog" aria-modal="true" aria-label="Allarme"><div class="mh"><h2 class="mt">Allarme</h2>' + x + '</div><div class="mb">' +
+      return '<dialog class="ov" data-act="ovclose" aria-label="Allarme"><div class="dlg' + sz + '"><div class="mh"><h2 class="mt">Allarme</h2>' + x + '</div><div class="mb">' +
         '<div class="abig"><div class="orb" style="background:' + orbBg + ';color:' + orbFg + '"><svg viewBox="0 0 24 24"><path fill="currentColor" d="' + sh + '"/></svg></div><div><div class="vt">' + lab + '</div><div class="vs">' + esc(this._cfg.title || 'Allarme') + '</div></div></div>' +
         '<div class="ast"><div><span>Ora</span><b>' + lab + '</b></div><div><span>Dopo il comando</span><b>' + after + '</b></div></div>' +
         (need ? '<div class="lbl">Codice richiesto</div>' : '<div class="warnt">Nessun codice impostato in Home Assistant: il tastierino non verifica nulla.</div>') +
         input + '<div class="err" id="err" role="alert">' + esc(this._err) + '</div>' + keys +
         '<button type="button" class="acta' + (this._act === 'disarm' && mode === 'trig' ? ' c' : '') + '" data-act="submit" data-focus="submit" ' + ((need && !this._code) || this._busy ? 'disabled' : '') + '>' + (this._busy ? 'Invio…' : label) + '</button>' +
-        '<div class="note" style="text-align:center;margin-top:10px">Il codice si digita ogni volta e non viene mai salvato. Lo verifica Home Assistant.</div></div></div></div>';
+        '<div class="note" style="text-align:center;margin-top:10px">Il codice si digita ogni volta e non viene mai salvato. Lo verifica Home Assistant.</div></div></div></dialog>';
     }
 
     _render() {
@@ -690,10 +740,9 @@
         }
         const tiles = mods.filter((k) => cfg.modules[k].tile);
         if (tiles.length) {
-          const nt = tiles.length, best = (list, d) => { for (let i = 0; i < list.length; i++) if (nt % list[i] === 0) return list[i]; return d; };
-          h += '<div class="grid" style="--g3:' + best([3, 2], 3) + ';--g4:' + best([4, 3, 2], 4) + '">' + tiles.map((k) => {
+          h += '<div class="lst">' + tiles.map((k) => {
             const s = summaryOf(k, this._items(k));
-            return '<button type="button" class="tile ' + (s.lv === 'ok' ? '' : s.lv) + '" data-act="' + (k === 'siren' ? 'siren-tile' : 'tile') + '" data-m="' + k + '" data-focus="tile-' + k + '"><div class="ico">' + ic(MODS[k].icon) + '</div><div class="t"><div class="rn">' + esc(MODS[k].short) + '</div><div class="rs">' + esc(s.t) + '</div></div></button>';
+            return '<button type="button" class="tile ' + (s.lv === 'ok' ? '' : s.lv) + '" data-act="' + (k === 'siren' ? 'siren-tile' : 'tile') + '" data-m="' + k + '" data-focus="tile-' + k + '"><div class="ico">' + ic(MODS[k].icon) + '</div><div class="t"><div class="rn">' + esc(MODS[k].short) + '</div></div><div class="rs st">' + esc(s.t) + '</div>' + ic('mdi:chevron-right', ' class="chev"') + '</button>';
           }).join('') + '</div>';
         }
         if (mods.length) h += '<button type="button" class="detail" data-act="details" data-focus="details">Dettagli e stato ' + ic('mdi:chevron-right') + '</button>';
@@ -705,6 +754,12 @@
       }
       h += '</div>';
       root.innerHTML = '<div class="hc" data-mode="' + this._mode() + '"><div class="cardw">' + h + '</div>' + (this._popup ? this._popupHTML() : '') + '</div>';
+      const modal = root.querySelector('dialog.ov');
+      if (modal) {
+        modal.addEventListener('cancel', (ev) => ev.preventDefault());
+        // Top layer: the popup is centred on the screen whatever the dashboard around the card does.
+        try { if (typeof modal.showModal === 'function') modal.showModal(); else modal.setAttribute('open', ''); } catch (err) { modal.setAttribute('open', ''); }
+      }
       this._masonry();
       const nb = root.querySelector('.mb');
       if (nb) {
@@ -798,7 +853,7 @@
     }
     _key(e) {
       if (!this._popup) return;
-      if (e.key === 'Escape') { e.stopPropagation(); this._closePopup(); return; }
+      if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); this._closePopup(); return; }
       if (this._view === 'keypad') {
         const st = stOf(this._hass, this._cfg.entity), text = st && st.attributes && st.attributes.code_format === 'text';
         const inInput = this.shadowRoot.activeElement && this.shadowRoot.activeElement.id === 'code';
@@ -904,10 +959,30 @@ button,input,select{font:inherit;color:inherit}
         h += '<div class="mod"><div class="mh"><div class="nm">' + esc(MODS[k].title) + '</div><div class="ctl"><button type="button" class="action" data-move="' + i + ':-1" aria-label="Sposta su ' + esc(MODS[k].title) + '" ' + (i === 0 ? 'disabled' : '') + '>↑</button><button type="button" class="action" data-move="' + i + ':1" aria-label="Sposta giù ' + esc(MODS[k].title) + '" ' + (i === n.order.length - 1 ? 'disabled' : '') + '>↓</button></div></div>' +
           '<div class="muted" style="margin-top:6px">' + esc(MODS[k].help) + '</div>' +
           '<div class="mb"><div class="chk"><input type="checkbox" id="on-' + k + '" data-on="' + k + '" ' + (m.on ? 'checked' : '') + '><label for="on-' + k + '">Modulo attivo</label></div>' +
-          (n.panel ? '<div class="chk"><input type="checkbox" id="tile-' + k + '" data-tile="' + k + '" ' + (m.tile ? 'checked' : '') + '><label for="tile-' + k + '">Riquadro nella griglia della card</label></div>' : '') +
-          '<div data-slot="mod-' + k + '"></div></div></div>';
+          (n.panel ? '<div class="chk"><input type="checkbox" id="tile-' + k + '" data-tile="' + k + '" ' + (m.tile ? 'checked' : '') + '><label for="tile-' + k + '">Riga nell’elenco della card</label></div>' : '') +
+          '<div data-slot="mod-' + k + '"></div>' + this._roomPick(k, m) + '</div></div>';
       });
       return h;
+    }
+    // Rooms (Home Assistant areas) that hold compatible devices not yet in the module.
+    _roomsFor(k, m) {
+      const h = this._hass, f = MODS[k].sel && MODS[k].sel.filter;
+      if (!h || !h.states || !h.areas || ROOM_MODS.indexOf(k) < 0 || !f) return [];
+      const out = {};
+      Object.keys(h.states).forEach((id) => {
+        if (m.entities.indexOf(id) >= 0) return;
+        const st = h.states[id], dc = st && st.attributes && st.attributes.device_class;
+        const ok = f.some((x) => x.domain === id.split('.')[0] && (!x.device_class || [].concat(x.device_class).indexOf(dc) >= 0));
+        if (!ok) return;
+        const a = areaOf(h, id);
+        if (a) (out[a.id] = out[a.id] || { id: a.id, name: a.name, ids: [] }).ids.push(id);
+      });
+      return Object.keys(out).map((x) => out[x]).sort((x, y) => x.name.localeCompare(y.name, 'it'));
+    }
+    _roomPick(k, m) {
+      const rs = this._roomsFor(k, m);
+      if (!rs.length) return '';
+      return '<div class="field"><div class="label">Aggiungi da stanza</div><select class="input" data-room="' + k + '"><option value="">Scegli una stanza…</option>' + rs.map((r) => '<option value="' + esc(r.id) + '">' + esc(r.name) + ' (' + r.ids.length + ')</option>').join('') + '</select><div class="tiny">Aggiunge i dispositivi compatibili di quella stanza. Puoi sempre toglierne qualcuno dal selettore.</div></div>';
     }
     _aspetto(n) {
       return '<div class="heading">Aspetto Edera</div><div class="desc">Titolo, intestazione e tema, coerenti con le altre card.</div>' +
@@ -954,7 +1029,11 @@ button,input,select{font:inherit;color:inherit}
       if (el.dataset && el.dataset.tile) { this._setMod(el.dataset.tile, { tile: el.checked }); return; }
       const map = { 'show-eyebrow': 'show_eyebrow', 'show-title': 'show_title', panel: 'panel', commands: 'commands', legend: 'legend', hands: 'hands' };
       if (map[el.id]) { c[map[el.id]] = el.checked; this._emit(c); if (el.id === 'panel') this._render(); return; }
-      if (el.id === 'theme') { c.theme_mode = el.value; this._emit(c); }
+      if (el.id === 'theme') { c.theme_mode = el.value; this._emit(c); return; }
+      if (el.dataset && el.dataset.room && el.value) {
+        const k = el.dataset.room, n = this._norm(), r = this._roomsFor(k, n.modules[k]).filter((x) => x.id === el.value)[0];
+        if (r) { this._setMod(k, { entities: n.modules[k].entities.concat(r.ids) }); this._render(); }
+      }
     }
     _input(e) {
       const el = e.target;

@@ -276,7 +276,20 @@
 .hc .lst .tile:nth-child(3n+1){border-left:0}.hc .lst .tile:nth-child(n+4){border-top:1px solid var(--hc-line)}
 .hc .lst .tile:last-child:nth-child(odd){grid-column:auto}
 .hc .tile .t{flex:none;font-size:11.5px}.hc .tile .st{max-width:100%;font-size:10.5px;text-align:center}.hc .tile .chev{display:none}
+.hc .lst .tile.ph{pointer-events:none}
 .hc .detail{min-height:38px}
+.head.hb{display:flex;align-items:center;justify-content:space-between;gap:10px}.head.hb .ht{min-width:0}
+.hc .detail.dtl{flex:none;width:36px;min-width:36px;height:36px;min-height:36px;padding:0;gap:0;margin:0;border-radius:50%}.detail.dtl ha-icon{--mdc-icon-size:20px}
+@container (min-width:600px){
+.hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst){display:grid;grid-template-columns:290px minmax(0,1fr);gap:10px 12px;align-items:stretch}
+.hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>:not(.panel):not(.lst){grid-column:1/-1}
+.hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>.panel.has-dial{grid-column:1;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:10px;padding:10px 12px;margin-bottom:0}
+.hc[data-cw="full"] .panel.has-dial .dial{max-width:150px}.hc[data-cw="full"] .panel.has-dial .cmd{min-height:46px;font-size:14px}
+.hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>.lst{grid-column:2;grid-row:2;grid-template-columns:minmax(0,1fr)}
+.hc[data-cw="full"] .lst .tile{flex-direction:row;gap:10px;text-align:left;padding:8px 12px;min-height:50px;justify-content:flex-start}
+.hc[data-cw="full"] .lst .tile:nth-child(n){border-left:0;border-top:1px solid var(--hc-line)}.hc[data-cw="full"] .lst .tile:nth-child(1){border-top:0}
+.hc[data-cw="full"] .lst .tile .t{flex:1;font-size:inherit}.hc[data-cw="full"] .lst .tile .st{max-width:50%;font-size:12px;text-align:right}.hc[data-cw="full"] .lst .tile .chev{display:inline-flex}
+.hc[data-cw="full"] .lst .tile.ph{display:none}}
 /* rows */
 .row{display:flex;align-items:center;gap:10px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:14px;padding:5px 10px;min-height:44px;margin-bottom:5px;min-width:0}
 .row .rn{font-size:13px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.25}.row .rs{font-size:11px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.3;margin-top:1px}
@@ -745,8 +758,11 @@
       const h0 = root.offsetHeight; if (h0) root.style.minHeight = h0 + 'px';
       const mods = this._mods();
       let h = '<div class="shell">';
-      if ((cfg.show_title && cfg.title) || (cfg.show_eyebrow && cfg.eyebrow)) {
-        h += '<div class="head">' + (cfg.show_eyebrow && cfg.eyebrow ? '<div class="eye">' + esc(cfg.eyebrow) + '</div>' : '') + (cfg.show_title && cfg.title ? '<div class="title" role="heading" aria-level="2">' + esc(cfg.title) + '<b>.</b></div>' : '') + '</div>';
+      const hasHead = (cfg.show_title && cfg.title) || (cfg.show_eyebrow && cfg.eyebrow);
+      const dtlInHead = !!(hasHead && cfg.panel && mods.length);
+      if (hasHead) {
+        const ht = (cfg.show_eyebrow && cfg.eyebrow ? '<div class="eye">' + esc(cfg.eyebrow) + '</div>' : '') + (cfg.show_title && cfg.title ? '<div class="title" role="heading" aria-level="2">' + esc(cfg.title) + '<b>.</b></div>' : '');
+        h += dtlInHead ? '<div class="head hb"><div class="ht">' + ht + '</div><button type="button" class="detail dtl" data-act="details" data-focus="details" aria-label="Dettagli e stato" title="Dettagli e stato">' + ic('mdi:chevron-right') + '</button></div>' : '<div class="head">' + ht + '</div>';
       }
       if (cfg.panel) {
         const st = cfg.entity ? stOf(hass, cfg.entity) : null;
@@ -765,9 +781,9 @@
           h += '<div class="lst">' + tiles.map((k) => {
             const s = summaryOf(k, this._items(k));
             return '<button type="button" class="tile ' + (s.lv === 'ok' ? '' : s.lv) + '" data-act="' + (k === 'siren' ? 'siren-tile' : 'tile') + '" data-m="' + k + '" data-focus="tile-' + k + '"><div class="ico">' + ic(MODS[k].icon) + '</div><div class="t"><div class="rn">' + esc(MODS[k].short) + '</div></div><div class="rs st">' + esc(s.t) + '</div>' + ic('mdi:chevron-right', ' class="chev"') + '</button>';
-          }).join('') + '</div>';
+          }).join('') + new Array((3 - (tiles.length % 3)) % 3 + 1).join('<span class="tile ph" aria-hidden="true"></span>') + '</div>';
         }
-        if (mods.length) h += '<button type="button" class="detail" data-act="details" data-focus="details">Dettagli e stato ' + ic('mdi:chevron-right') + '</button>';
+        if (mods.length && !dtlInHead) h += '<button type="button" class="detail" data-act="details" data-focus="details">Dettagli e stato ' + ic('mdi:chevron-right') + '</button>';
       } else {
         if (!mods.length) h += '<div class="empty">Nessun modulo con entità: scegli le entità dalla configurazione della card.</div>';
         mods.forEach((k) => {

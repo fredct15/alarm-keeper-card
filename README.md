@@ -36,7 +36,7 @@ The card reads entities by domain and device class, so it is not tied to a speci
 - **Code keypad:** Disarming always asks for the code on a numeric keypad with rounded square keys. The code is typed every time, sent to Home Assistant and never stored in the card or in its settings.
 - **Modular:** Ten modules, each usable on its own or together in the full card.
 - **Summary grid:** One tile for each module with a short status, three per row, composed by default and adjustable in the editor. Tap a tile to open its group in the details popup.
-- **Details popup:** Fixed-height popup, centred on the screen, with filters for the items that need attention (**Attenzione**, shown first) and for all items. Devices are grouped by room, using the rooms assigned in Home Assistant; devices without a room follow, grouped by type. On tablets and desktop it uses a wide layout with columns.
+- **Details popup:** Opened from the round button next to the title (or from a button below the grid when the header is hidden). Fixed-height popup, centred on the screen, with filters for the items that need attention (**Attenzione**, shown first) and for all items. Devices are grouped by room, using the rooms assigned in Home Assistant; devices without a room follow, grouped by type. On tablets and desktop it uses a wide layout with columns.
 - **Doors and windows:** Open or closed, with the time since the last change.
 - **Motion sensors:** Current state and the time of the last movement.
 - **Tamper sensors and batteries:** Tamper alerts and battery levels, with a warning for low batteries.
@@ -45,7 +45,7 @@ The card reads entities by domain and device class, so it is not tied to a speci
 - **Cameras:** Optional camera tiles; a tap opens the camera details in Home Assistant.
 - **Volumes:** Read-only by default; each volume has its own lock button that enables its minus and plus buttons.
 - **Settings:** Select entities such as bypass mode and sounds, changed from the popup.
-- **Edera appearance:** Automatic, Light, and Dark themes, a compact layout with the dial and the buttons side by side, limited to a narrow width on tablets and desktop unless you choose the full width, rounded elements, and native Home Assistant icons.
+- **Edera appearance:** Automatic, Light, and Dark themes, a compact layout with the dial and the buttons side by side, limited to a narrow width on tablets and desktop; at full width the dial and the buttons stay on the left and the modules are listed on the right, rounded elements, and native Home Assistant icons.
 - **Visual configuration:** Choose entities with the native Home Assistant selectors in the dashboard editor, or add the compatible devices of a whole room at once.
 
 Unavailable or unknown entities are always reported as not available and never counted as in order.

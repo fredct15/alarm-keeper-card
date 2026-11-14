@@ -325,7 +325,13 @@
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--hc-accent) 14%,transparent);border-color:color-mix(in srgb,var(--hc-accent) 45%,transparent);color:var(--hc-fg);font-weight:600}
 .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 8px;font-size:13px;font-weight:600}.rh span{font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--hc-muted)}
 .rh em{font-style:normal;font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px}.rh em.w{color:var(--hc-warn-fg);background:var(--hc-warn-bg,#f7ecc8)}.rh em.o{color:var(--hc-accent);background:color-mix(in srgb,var(--hc-accent) 14%,transparent)}.rh em.c{color:var(--hc-crit-text);background:color-mix(in srgb,var(--hc-crit-text) 14%,transparent)}
-.mrow{display:flex;gap:22px;align-items:flex-start}.mcol{flex:1 1 0;min-width:0}
+:host([data-popup="wide"]) .cols{column-width:260px;column-count:4;column-gap:22px;column-fill:balance;direction:rtl}
+:host([data-popup="wide"]) .cols>*{direction:ltr}
+:host([data-popup="wide"]) .chips{column-span:all}
+:host([data-popup="wide"]) .cols .rh{break-after:avoid;margin:0 0 8px}
+:host([data-popup="wide"]) .cols .grp{padding-bottom:16px}
+:host([data-popup="wide"]) .chips{margin-bottom:14px}
+:host([data-popup="wide"]) .cols .grp>*{break-inside:avoid}
 .mcol>.grp:first-child .rh,.cols>.grp:first-child .rh{margin-top:4px}
 .abig{display:flex;align-items:center;gap:12px;margin:4px 0 12px;padding:14px;border-radius:24px;background:var(--hc-tile);border:1px solid var(--hc-line)}
 .orb{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--hc-accent);color:#fff;flex:none}
@@ -798,7 +804,6 @@
         // Top layer: the popup is centred on the screen whatever the dashboard around the card does.
         try { if (typeof modal.showModal === 'function') modal.showModal(); else modal.setAttribute('open', ''); } catch (err) { modal.setAttribute('open', ''); }
       }
-      this._masonry();
       const nb = root.querySelector('.mb');
       if (nb) {
         nb.scrollTop = keep;

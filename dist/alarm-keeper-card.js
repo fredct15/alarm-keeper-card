@@ -242,7 +242,9 @@
 .cmd.p{background:var(--hc-accent);border-color:var(--hc-accent);color:#fff}
 .cmd.c{background:var(--hc-crit-bg);border-color:var(--hc-crit-bg);color:#fff}
 .cmd[disabled]{opacity:.5;cursor:default}
-.msg{margin:8px 4px 0;font-size:12px;color:var(--hc-crit-text);font-weight:600;text-align:center}
+.msg{position:absolute;left:12px;right:12px;top:10px;z-index:3;box-sizing:border-box;min-height:40px;display:flex;align-items:center;justify-content:center;margin:0;padding:6px 14px;border-radius:14px;background:var(--hc-tile);border:1px solid var(--hc-crit-text);font-size:12px;color:var(--hc-crit-text);font-weight:600;text-align:center;box-shadow:0 4px 14px #0002}
+.shell{position:relative}
+.hc[data-loading]{pointer-events:none}.hc[data-loading] .tile .st{visibility:hidden}
 .lab{margin:14px 4px 8px;color:var(--hc-muted);font-size:10px;letter-spacing:1.3px;font-weight:600;text-transform:uppercase}
 .lab:first-child{margin-top:0}
 .lkrow{display:flex;align-items:center;justify-content:space-between}
@@ -270,7 +272,7 @@
 .hc .head{margin-bottom:4px}.hc .title{font-size:20px}
 .hc .panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 14px;align-items:center;padding:8px 12px}
 .hc .panel.has-dial .dial{max-width:112px;margin:0}.hc .panel.has-dial .cmds{flex-direction:column;gap:6px;margin:0}
-.hc .panel.has-dial .cmd{min-height:38px;font-size:13px;padding:4px 10px}.hc .panel.has-dial .msg{grid-column:1/-1}
+.hc .panel.has-dial .cmd{min-height:38px;font-size:13px;padding:4px 10px}
 .hc .lst{grid-template-columns:repeat(3,minmax(0,1fr))}
 .hc .lst .tile{flex-direction:column;gap:3px;text-align:center;padding:8px 4px;min-height:64px;justify-content:center;border-top:0;border-left:1px solid var(--hc-line)}
 .hc .lst .tile:nth-child(3n+1){border-left:0}.hc .lst .tile:nth-child(n+4){border-top:1px solid var(--hc-line)}
@@ -755,10 +757,17 @@
       const want = this._focus || (active && active.getAttribute ? active.getAttribute('data-focus') : '');
       const typed = active && active.id === 'code' ? { v: active.value, s: active.selectionStart } : null;
       this._focus = '';
-      if (!hass) { root.innerHTML = '<div class="hc" data-mode="' + this._mode() + '"><div class="cardw"><div class="shell"><div class="empty">Caricamento…</div></div></div></div>'; return; }
-      const h0 = root.offsetHeight; if (h0) root.style.minHeight = h0 + 'px';
+      // Until Home Assistant hands over its state the card is drawn with the real structure (empty data),
+      // so it already has its final height and nothing moves when the data arrives.
+      if (!hass) {
+        this._hass = { states: {}, areas: {}, devices: {}, entities: {}, themes: {}, callService: () => Promise.reject(new Error('loading')) };
+        try { this._render(); } finally { this._hass = null; }
+        const hc = root.querySelector('.hc'); if (hc) hc.setAttribute('data-loading', '');
+        return;
+      }
+      const h0 = root.getBoundingClientRect().height; if (h0) root.style.minHeight = h0 + 'px';
       const mods = this._mods();
-      let h = '<div class="shell">';
+      let h = '<div class="shell">' + (this._msg ? '<div class="msg" role="alert">' + esc(this._msg) + '</div>' : '');
       const hasHead = (cfg.show_title && cfg.title) || (cfg.show_eyebrow && cfg.eyebrow);
       const dtlInHead = !!(hasHead && cfg.panel && mods.length);
       if (hasHead) {
@@ -770,7 +779,7 @@
         if (!cfg.entity) h += '<div class="panel"><div class="empty">Scegli l’entità dell’allarme dalla configurazione della card.</div></div>';
         else {
           const mode = alarmMode(st ? st.state : '');
-          h += '<div class="panel has-dial">' + this._dial(mode, st) + (cfg.commands ? '<div class="cmds">' + this._cmds(mode, st) + '</div>' : '') + (this._msg ? '<div class="msg" role="alert">' + esc(this._msg) + '</div>' : '');
+          h += '<div class="panel has-dial">' + this._dial(mode, st) + (cfg.commands ? '<div class="cmds">' + this._cmds(mode, st) + '</div>' : '') + '';
           if (this._leg && cfg.legend) {
             const n = nowH();
             h += '<div class="leg" data-act="leg"><b>Oggi inserito ' + durH(this._armedTotal()) + '</b><div class="l"><span><i style="background:var(--hc-accent)"></i>In casa</span><span><i style="background:var(--hc-away)"></i>Fuori casa</span><span><i style="background:var(--hc-warn-bd)"></i>Non inserito</span></div><p>Quadrante da 12 ore: ora mostra ' + (n >= 12 ? 'il pomeriggio (12–24)' : 'la mattina (0–12)') + '.' + (this._histOk ? '' : ' Storico non disponibile: mostro solo lo stato attuale.') + '</p></div>';

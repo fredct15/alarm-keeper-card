@@ -31,7 +31,7 @@
 
   const DEFAULTS = {
     entity: '', title: 'Allarme', eyebrow: 'ALARM KEEPER CARD', show_eyebrow: true, show_title: true,
-    panel: true, commands: true, legend: true, hands: false, theme_mode: 'auto'
+    panel: true, commands: true, legend: true, hands: false, width: 'center', theme_mode: 'auto'
   };
 
   const SHIELD = {"home": "M11,13H13V16H16V11H18L12,6L6,11H8V16H11V13M12,1L21,5V11C21,16.55 17.16,21.74 12,23C6.84,21.74 3,16.55 3,11V5L12,1Z", "off": "M1,4.27L2.28,3L20.5,21.22L19.23,22.5L17,20.25C15.57,21.57 13.87,22.54 12,23C6.84,21.74 3,16.55 3,11V6.27L1,4.27M12,1L21,5V11C21,13.28 20.35,15.5 19.23,17.41L5.65,3.82L12,1Z", "away": "M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.1 14.8,9.5V11C15.4,11 16,11.6 16,12.3V15.8C16,16.4 15.4,17 14.7,17H9.2C8.6,17 8,16.4 8,15.7V12.2C8,11.6 8.6,11 9.2,11V9.5C9.2,8.1 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,9.5V11H13.5V9.5C13.5,8.7 12.8,8.2 12,8.2Z", "trig": "M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5M11,7H13V13H11M11,15H13V17H11"};
@@ -73,6 +73,7 @@
     const c = Object.assign({}, DEFAULTS, raw);
     if (['auto', 'light', 'dark'].indexOf(c.theme_mode) < 0) c.theme_mode = 'auto';
     ['show_eyebrow', 'show_title', 'panel', 'commands', 'legend', 'hands'].forEach((k) => { c[k] = c[k] !== false && c[k] !== 'false'; });
+    if (['center', 'left', 'right', 'full'].indexOf(c.width) < 0) c.width = 'center';
     c.hands = raw.hands === true;
     c.title = String(c.title == null ? '' : c.title).trim().replace(/\.+$/, '');
     const src = raw.modules && typeof raw.modules === 'object' ? raw.modules : {};
@@ -264,6 +265,18 @@
 .note{margin:6px 4px 12px;font-size:12px;color:var(--hc-muted)}
 .empty{padding:18px 8px;text-align:center;color:var(--hc-muted);font-size:13px}
 @container (min-width:600px){.panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:16px 28px}.panel.has-dial .dial{margin:0}.panel.has-dial .cmds{margin-top:0;flex-direction:column}.panel.has-dial .cmd{min-height:52px;font-size:14.5px}.panel.has-dial .msg{grid-column:2}  .lst{grid-template-columns:repeat(2,minmax(0,1fr))}.lst .tile:nth-child(2){border-top:0}.lst .tile:nth-child(even){border-left:1px solid var(--hc-line)}.lst .tile:last-child:nth-child(odd){grid-column:1/-1}.leg{left:28px;right:auto;width:300px}}
+.hc .cardw{max-width:460px;margin:0 auto}
+.hc[data-cw="left"] .cardw{margin:0 auto 0 0}.hc[data-cw="right"] .cardw{margin:0 0 0 auto}.hc[data-cw="full"] .cardw{max-width:none}
+.hc .head{margin-bottom:4px}.hc .title{font-size:20px}
+.hc .panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 14px;align-items:center;padding:8px 12px}
+.hc .panel.has-dial .dial{max-width:112px;margin:0}.hc .panel.has-dial .cmds{flex-direction:column;gap:6px;margin:0}
+.hc .panel.has-dial .cmd{min-height:38px;font-size:13px;padding:4px 10px}.hc .panel.has-dial .msg{grid-column:1/-1}
+.hc .lst{grid-template-columns:repeat(3,minmax(0,1fr))}
+.hc .lst .tile{flex-direction:column;gap:3px;text-align:center;padding:8px 4px;min-height:64px;justify-content:center;border-top:0;border-left:1px solid var(--hc-line)}
+.hc .lst .tile:nth-child(3n+1){border-left:0}.hc .lst .tile:nth-child(n+4){border-top:1px solid var(--hc-line)}
+.hc .lst .tile:last-child:nth-child(odd){grid-column:auto}
+.hc .tile .t{flex:none;font-size:11.5px}.hc .tile .st{max-width:100%;font-size:10.5px;text-align:center}.hc .tile .chev{display:none}
+.hc .detail{min-height:38px}
 /* rows */
 .row{display:flex;align-items:center;gap:10px;background:var(--hc-tile);border:1px solid var(--hc-line);border-radius:14px;padding:5px 10px;min-height:44px;margin-bottom:5px;min-width:0}
 .row .rn{font-size:13px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.25}.row .rs{font-size:11px;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.3;margin-top:1px}
@@ -311,12 +324,12 @@
 .dotrow{display:flex;justify-content:center;align-items:center;min-height:28px;margin-bottom:4px}
 .dots{display:flex;gap:12px;justify-content:center;min-height:14px}.dots i{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--hc-muted)}.dots i.f{background:var(--hc-fg);border-color:var(--hc-fg)}
 .err{text-align:center;color:var(--hc-crit-text);font-size:12.5px;font-weight:600;min-height:18px;margin:2px 0 6px}
-.keys{--ks:64px;display:grid;grid-template-columns:repeat(3,var(--ks));gap:10px 18px;justify-content:center;margin:4px 0 14px}
-.keys button{width:var(--ks);height:var(--ks);border-radius:50%;border:1px solid var(--hc-line);background:var(--hc-tile);padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;color:var(--hc-fg);-webkit-tap-highlight-color:transparent}
+.keys{display:grid;grid-template-columns:repeat(3,72px);gap:10px;justify-content:center;margin:4px 0 14px}
+.keys button{width:72px;height:56px;border-radius:18px;border:1px solid var(--hc-line);background:var(--hc-tile);padding:0;display:flex;align-items:center;justify-content:center;line-height:1;color:var(--hc-fg);-webkit-tap-highlight-color:transparent}
 .keys button:active{background:var(--hc-line)}
-.keys b{font-size:26px;font-weight:400;letter-spacing:0}.keys small{display:block;min-height:9px;margin-top:2px;font-size:9px;font-weight:600;letter-spacing:2px;text-indent:2px;color:var(--hc-muted)}
+.keys b{font-size:24px;font-weight:500;letter-spacing:0}
 .keys .bk{border-color:transparent;background:transparent}.keys .bk ha-icon{--mdc-icon-size:26px;width:26px;height:26px}.keys .bk[disabled]{opacity:.35;cursor:default}
-@media (max-height:720px){.keys{--ks:56px;gap:8px 16px}.keys b{font-size:23px}}
+@media (max-height:720px){.keys button{height:48px}.keys{gap:8px 10px}.keys b{font-size:22px}}
 .code{display:block;width:100%;min-height:46px;margin:0 0 12px;padding:0 14px;border-radius:14px;border:1px solid var(--hc-line);background:var(--hc-tile);color:var(--hc-fg);font-size:16px}
 .acta{display:block;width:100%;min-height:46px;border-radius:999px;background:var(--hc-accent);color:#fff;border:0;font-size:14px;font-weight:600}.acta[disabled]{opacity:.45;cursor:default}
 .acta.c{background:var(--hc-crit-bg)}
@@ -644,7 +657,7 @@
         if (!keys.length && !bk['']) return none();
         const grp = (title, g, lock, first) => {
           const ord = mods.filter((k) => g.mods[k]).sort((x, y) => (x === first ? -1 : 0) - (y === first ? -1 : 0)), all = [].concat.apply([], ord.map((k) => g.mods[k])), bad = all.filter((i) => i.lv);
-          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + '' + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' da verificare' : 'Tutto ok') + '</em></div>' +
+          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + '' + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' in attenzione' : 'Tutto ok') + '</em></div>' +
             ord.map((k) => filter === 'v' ? g.mods[k].map((i) => this._row(i)).join('') : this._itemsHTML(k, g.mods[k])).join('') + '</div>';
         };
         keys.forEach((key) => { b += grp(bk[key].name, bk[key], !!bk[key].mods.volumes && filter !== 'v'); });
@@ -674,7 +687,7 @@
           const L = this._items(k).filter((i) => i.lv);
           if (!L.length) return;
           any = true;
-          b += '<div class="grp"><div class="rh"><span>' + esc(MODS[k].title) + '</span><em class="' + (L.some((i) => i.lv === 'crit') ? 'c' : 'w') + '">' + L.length + ' da verificare</em></div>' + L.map((i) => this._row(i)).join('') + '</div>';
+          b += '<div class="grp"><div class="rh"><span>' + esc(MODS[k].title) + '</span><em class="' + (L.some((i) => i.lv === 'crit') ? 'c' : 'w') + '">' + L.length + ' in attenzione</em></div>' + L.map((i) => this._row(i)).join('') + '</div>';
         });
         return any ? b : none();
       }
@@ -689,7 +702,7 @@
       const x = '<button type="button" class="x" data-act="close" data-focus="close" aria-label="Chiudi">' + ic('mdi:close') + '</button>';
       const st = stOf(this._hass, this._cfg.entity);
       if (this._view === 'details') {
-        const chips = '<div class="chips"><button type="button" class="chip" data-filter="v" aria-pressed="' + (this._filter === 'v') + '" data-focus="fv">Da verificare</button><button type="button" class="chip" data-filter="a" aria-pressed="' + (this._filter === 'a') + '" data-focus="fa">Tutti</button></div>';
+        const chips = '<div class="chips"><button type="button" class="chip" data-filter="v" aria-pressed="' + (this._filter === 'v') + '" data-focus="fv">Attenzione</button><button type="button" class="chip" data-filter="a" aria-pressed="' + (this._filter === 'a') + '" data-focus="fa">Tutti</button></div>';
         return '<dialog class="ov" data-act="ovclose" aria-label="Dettagli e stato"><div class="dlg"><div class="mh"><h2 class="mt">Dettagli e stato</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></dialog>';
       }
       if (this._view === 'siren') {
@@ -708,8 +721,7 @@
       let input;
       if (text) input = '<input class="code" type="password" id="code" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Codice" value="' + esc(this._code) + '" data-focus="code">';
       else input = '<div class="dotrow"><div class="dots ' + (this._shake ? 'shake' : '') + '" id="dots">' + Array.from({ length: dots }, (_, i) => '<i class="' + (i < this._code.length ? 'f' : '') + '"></i>').join('') + '</div></div>';
-      const LET = { 2: 'ABC', 3: 'DEF', 4: 'GHI', 5: 'JKL', 6: 'MNO', 7: 'PQRS', 8: 'TUV', 9: 'WXYZ' };
-      const kb = (k) => '<button type="button" data-act="key" data-k="' + k + '" aria-label="' + k + '"><b>' + k + '</b><small>' + (LET[k] || '') + '</small></button>';
+      const kb = (k) => '<button type="button" data-act="key" data-k="' + k + '" aria-label="' + k + '"><b>' + k + '</b></button>';
       const keys = text ? '' : '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(kb).join('') + '<span></span>' + kb(0) + '<button type="button" class="bk" data-act="back" aria-label="Cancella l’ultima cifra" ' + (this._code ? '' : 'disabled') + '>' + ic('mdi:backspace-outline') + '</button></div>';
       const label = this._act === 'disarm' ? 'Disattiva allarme' : this._act === 'arm_home' ? 'Inserisci in casa' : 'Inserisci fuori casa';
       return '<dialog class="ov" data-act="ovclose" aria-label="Allarme"><div class="dlg' + sz + '"><div class="mh"><h2 class="mt">Allarme</h2>' + x + '</div><div class="mb">' +
@@ -763,7 +775,7 @@
         });
       }
       h += '</div>';
-      root.innerHTML = '<div class="hc" data-mode="' + this._mode() + '"><div class="cardw">' + h + '</div>' + (this._popup ? this._popupHTML() : '') + '</div>';
+      root.innerHTML = '<div class="hc" data-mode="' + this._mode() + '"' + ' data-cw="' + cfg.width + '"' + '><div class="cardw">' + h + '</div>' + (this._popup ? this._popupHTML() : '') + '</div>';
       const modal = root.querySelector('dialog.ov');
       if (modal) {
         modal.addEventListener('cancel', (ev) => ev.preventDefault());
@@ -1000,6 +1012,7 @@ button,input,select{font:inherit;color:inherit}
         this._field('Titolo', '<input class="input" type="text" id="title" maxlength="60" value="' + esc(n.title) + '">', 'Il punto verde finale lo aggiunge la card.') +
         this._check('show-eyebrow', 'Mostra intestazione superiore', '', n.show_eyebrow) +
         this._check('show-title', 'Mostra titolo', '', n.show_title) +
+        this._field('Larghezza su tablet e desktop', '<select class="input" id="cw">' + [['center', 'Stretta al centro'], ['left', 'Stretta a sinistra'], ['right', 'Stretta a destra'], ['full', 'Tutta la larghezza disponibile']].map((o) => '<option value="' + o[0] + '" ' + (n.width === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>', 'Con “Tutta la larghezza” la card segue lo spazio che Home Assistant le assegna; le altre la limitano a 460 px.') +
         this._field('Tema', '<select class="input" id="theme">' + [['auto', 'Automatico (Home Assistant)'], ['light', 'Light Edera'], ['dark', 'Dark Edera']].map((o) => '<option value="' + o[0] + '" ' + (n.theme_mode === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>');
     }
     _mount(slot, selector, value, cb) {
@@ -1039,6 +1052,7 @@ button,input,select{font:inherit;color:inherit}
       if (el.dataset && el.dataset.tile) { this._setMod(el.dataset.tile, { tile: el.checked }); return; }
       const map = { 'show-eyebrow': 'show_eyebrow', 'show-title': 'show_title', panel: 'panel', commands: 'commands', legend: 'legend', hands: 'hands' };
       if (map[el.id]) { c[map[el.id]] = el.checked; this._emit(c); if (el.id === 'panel') this._render(); return; }
+      if (el.id === 'cw') { c.width = el.value; this._emit(c); return; }
       if (el.id === 'theme') { c.theme_mode = el.value; this._emit(c); return; }
       if (el.dataset && el.dataset.room && el.value) {
         const k = el.dataset.room, n = this._norm(), r = this._roomsFor(k, n.modules[k]).filter((x) => x.id === el.value)[0];

@@ -323,7 +323,7 @@
 .mb{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:12px 18px 18px;min-width:0}
 :host([data-popup="wide"]) .mb{padding:12px 22px 22px}
 .chips{display:flex;gap:6px;margin-bottom:4px}
-.chip,.rl,.stp button{-webkit-tap-highlight-color:transparent}.chip:focus:not(:focus-visible),.rl:focus:not(:focus-visible),.stp button:focus:not(:focus-visible){outline:none;box-shadow:none}
+*,*::before,*::after{-webkit-tap-highlight-color:transparent}button:focus:not(:focus-visible),[tabindex]:focus:not(:focus-visible),dialog:focus,svg:focus{outline:none;box-shadow:none}
 .chip{min-height:36px;padding:0 14px;border:1px solid var(--hc-line);border-radius:999px;background:var(--hc-tile);color:var(--hc-muted);font-size:13px}
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--hc-accent) 14%,transparent);border-color:color-mix(in srgb,var(--hc-accent) 45%,transparent);color:var(--hc-fg);font-weight:600}
 .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 8px;font-size:13px;font-weight:600}.rh span{font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--hc-muted)}

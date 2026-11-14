@@ -269,7 +269,7 @@
 @container (min-width:600px){.panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 28px;align-items:center;padding:16px 28px}.panel.has-dial .dial{margin:0}.panel.has-dial .cmds{margin-top:0;flex-direction:column}.panel.has-dial .cmd{min-height:52px;font-size:14.5px}.panel.has-dial .msg{grid-column:2}  .lst{grid-template-columns:repeat(2,minmax(0,1fr))}.lst .tile:nth-child(2){border-top:0}.lst .tile:nth-child(even){border-left:1px solid var(--hc-line)}.lst .tile:last-child:nth-child(odd){grid-column:1/-1}.leg{left:28px;right:auto;width:300px}}
 .hc .cardw{max-width:460px;margin:0 auto}
 .hc[data-cw="left"] .cardw{margin:0 auto 0 0}.hc[data-cw="right"] .cardw{margin:0 0 0 auto}.hc[data-cw="full"] .cardw{max-width:none}
-.hc .head{margin-bottom:4px}.hc .title{font-size:20px}
+.hc .head{margin-bottom:12px}.hc .title{font-size:20px}
 .hc .panel.has-dial{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 14px;align-items:center;padding:8px 12px}
 .hc .panel.has-dial .dial{max-width:112px;margin:0}.hc .panel.has-dial .cmds{flex-direction:column;gap:6px;margin:0}
 .hc .panel.has-dial .cmd{min-height:38px;font-size:13px;padding:4px 10px}
@@ -286,7 +286,7 @@
 .hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst){display:grid;grid-template-columns:290px minmax(0,1fr);gap:10px 12px;align-items:stretch}
 .hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>:not(.panel):not(.lst){grid-column:1/-1}
 .hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>.panel.has-dial{grid-column:1;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:10px;padding:10px 12px;margin-bottom:0}
-.hc[data-cw="full"] .panel.has-dial .dial{max-width:150px}.hc[data-cw="full"] .panel.has-dial .cmd{min-height:46px;font-size:14px}
+.hc[data-cw="full"] .panel.has-dial .dial{max-width:150px}.hc[data-cw="full"] .shell:has(.lst)>.panel.has-dial .dial{margin:0 auto}.hc[data-cw="full"] .panel.has-dial .cmd{min-height:46px;font-size:14px}
 .hc[data-cw="full"] .shell:has(.panel.has-dial):has(.lst)>.lst{grid-column:2;grid-row:2;grid-template-columns:minmax(0,1fr)}
 .hc[data-cw="full"] .lst .tile{flex-direction:row;gap:10px;text-align:left;padding:8px 12px;min-height:50px;justify-content:flex-start}
 .hc[data-cw="full"] .lst .tile:nth-child(n){border-left:0;border-top:1px solid var(--hc-line)}.hc[data-cw="full"] .lst .tile:nth-child(1){border-top:0}
@@ -323,6 +323,7 @@
 .mb{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:12px 18px 18px;min-width:0}
 :host([data-popup="wide"]) .mb{padding:12px 22px 22px}
 .chips{display:flex;gap:6px;margin-bottom:4px}
+.chip,.rl,.stp button{-webkit-tap-highlight-color:transparent}.chip:focus:not(:focus-visible),.rl:focus:not(:focus-visible),.stp button:focus:not(:focus-visible){outline:none;box-shadow:none}
 .chip{min-height:36px;padding:0 14px;border:1px solid var(--hc-line);border-radius:999px;background:var(--hc-tile);color:var(--hc-muted);font-size:13px}
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--hc-accent) 14%,transparent);border-color:color-mix(in srgb,var(--hc-accent) 45%,transparent);color:var(--hc-fg);font-weight:600}
 .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 8px;font-size:13px;font-weight:600}.rh span{font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--hc-muted)}
@@ -1060,7 +1061,7 @@ button,input,select{font:inherit;color:inherit}
         this._field('Titolo', '<input class="input" type="text" id="title" maxlength="60" value="' + esc(n.title) + '">', 'Il punto verde finale lo aggiunge la card.') +
         this._check('show-eyebrow', 'Mostra intestazione superiore', '', n.show_eyebrow) +
         this._check('show-title', 'Mostra titolo', '', n.show_title) +
-        this._field('Larghezza su tablet e desktop', '<select class="input" id="cw">' + [['center', 'Stretta al centro'], ['left', 'Stretta a sinistra'], ['right', 'Stretta a destra'], ['full', 'Tutta la larghezza disponibile']].map((o) => '<option value="' + o[0] + '" ' + (n.width === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>', 'Con “Tutta la larghezza” la card segue lo spazio che Home Assistant le assegna; le altre la limitano a 460 px.') +
+        this._check('cw', 'Tutta la larghezza disponibile su tablet e desktop', 'Se è disattivato la card resta stretta (460 px) al centro.', n.width === 'full') +
         this._field('Tema', '<select class="input" id="theme">' + [['auto', 'Automatico (Home Assistant)'], ['light', 'Light Edera'], ['dark', 'Dark Edera']].map((o) => '<option value="' + o[0] + '" ' + (n.theme_mode === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>');
     }
     _mount(slot, selector, value, cb) {
@@ -1100,7 +1101,7 @@ button,input,select{font:inherit;color:inherit}
       if (el.dataset && el.dataset.tile) { this._setMod(el.dataset.tile, { tile: el.checked }); return; }
       const map = { 'show-eyebrow': 'show_eyebrow', 'show-title': 'show_title', panel: 'panel', commands: 'commands', legend: 'legend', hands: 'hands' };
       if (map[el.id]) { c[map[el.id]] = el.checked; this._emit(c); if (el.id === 'panel') this._render(); return; }
-      if (el.id === 'cw') { c.width = el.value; this._emit(c); return; }
+      if (el.id === 'cw') { c.width = el.checked ? 'full' : 'center'; this._emit(c); return; }
       if (el.id === 'theme') { c.theme_mode = el.value; this._emit(c); return; }
       if (el.dataset && el.dataset.room && el.value) {
         const k = el.dataset.room, n = this._norm(), r = this._roomsFor(k, n.modules[k]).filter((x) => x.id === el.value)[0];

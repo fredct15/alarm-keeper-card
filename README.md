@@ -80,7 +80,7 @@ Open a dashboard in edit mode, add **Alarm Keeper Card**, and configure the avai
 
 - **Allarme:** The alarm entity, the alarm panel, the commands, the legend and the optional clock hands.
 - **Moduli:** For each module, whether it is active, whether it has a tile in the grid, its entities and its position. For doors, windows, motion sensors, batteries, tamper sensors and cameras, **Aggiungi da stanza** adds the compatible devices of a room in one step; it lists only rooms that have compatible devices not yet added.
-- **Aspetto:** Header, title, theme and the card width on tablets and desktop: narrow centred (default), narrow on the left, narrow on the right, or the full available width.
+- **Aspetto:** Header, title, theme and a switch for the full available width on tablets and desktop (off by default: narrow and centred).
 
 The editor uses native Home Assistant entity selectors, filtered by domain and device class for each module.
 

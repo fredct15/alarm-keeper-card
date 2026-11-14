@@ -1056,7 +1056,7 @@ button,input,select{font:inherit;color:inherit}
       return '<div class="field"><div class="label">Aggiungi da stanza</div><select class="input" data-room="' + k + '"><option value="">Scegli una stanza…</option>' + rs.map((r) => '<option value="' + esc(r.id) + '">' + esc(r.name) + ' (' + r.ids.length + ')</option>').join('') + '</select><div class="tiny">Aggiunge i dispositivi compatibili di quella stanza. Puoi sempre toglierne qualcuno dal selettore.</div></div>';
     }
     _aspetto(n) {
-      return '<div class="heading">Aspetto Edera</div><div class="desc">Titolo, intestazione e tema, coerenti con le altre card.</div>' +
+      return '<div class="heading">Aspetto</div>' +
         this._field('Intestazione superiore', '<input class="input" type="text" id="eyebrow" maxlength="60" value="' + esc(n.eyebrow) + '">') +
         this._field('Titolo', '<input class="input" type="text" id="title" maxlength="60" value="' + esc(n.title) + '">', 'Il punto verde finale lo aggiunge la card.') +
         this._check('show-eyebrow', 'Mostra intestazione superiore', '', n.show_eyebrow) +

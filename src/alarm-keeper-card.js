@@ -325,13 +325,8 @@
 .chip[aria-pressed="true"]{background:color-mix(in srgb,var(--hc-accent) 14%,transparent);border-color:color-mix(in srgb,var(--hc-accent) 45%,transparent);color:var(--hc-fg);font-weight:600}
 .rh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:16px 0 8px;font-size:13px;font-weight:600}.rh span{font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--hc-muted)}
 .rh em{font-style:normal;font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px}.rh em.w{color:var(--hc-warn-fg);background:var(--hc-warn-bg,#f7ecc8)}.rh em.o{color:var(--hc-accent);background:color-mix(in srgb,var(--hc-accent) 14%,transparent)}.rh em.c{color:var(--hc-crit-text);background:color-mix(in srgb,var(--hc-crit-text) 14%,transparent)}
-:host([data-popup="wide"]) .cols{column-width:260px;column-count:4;column-gap:22px;column-fill:balance;direction:rtl}
-:host([data-popup="wide"]) .cols>*{direction:ltr}
-:host([data-popup="wide"]) .chips{column-span:all}
-:host([data-popup="wide"]) .cols .rh{break-after:avoid;margin:0 0 8px}
-:host([data-popup="wide"]) .cols .grp{padding-bottom:16px}
-:host([data-popup="wide"]) .chips{margin-bottom:14px}
-:host([data-popup="wide"]) .cols .grp>*{break-inside:avoid}
+.mrow{display:flex;flex-direction:row-reverse;gap:22px;align-items:flex-start}.mcol{flex:1 1 0;min-width:0}
+:host([data-popup="wide"]) .chips{margin-bottom:4px}
 .mcol>.grp:first-child .rh,.cols>.grp:first-child .rh{margin-top:4px}
 .abig{display:flex;align-items:center;gap:12px;margin:4px 0 12px;padding:14px;border-radius:24px;background:var(--hc-tile);border:1px solid var(--hc-line)}
 .orb{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--hc-accent);color:#fff;flex:none}
@@ -804,6 +799,7 @@
         // Top layer: the popup is centred on the screen whatever the dashboard around the card does.
         try { if (typeof modal.showModal === 'function') modal.showModal(); else modal.setAttribute('open', ''); } catch (err) { modal.setAttribute('open', ''); }
       }
+      this._masonry();
       const nb = root.querySelector('.mb');
       if (nb) {
         nb.scrollTop = keep;
@@ -819,7 +815,8 @@
       else if (want) { const el = root.querySelector('[data-focus="' + want + '"]'); if (el) el.focus({ preventScroll: true }); }
     }
 
-    // Groups flow into columns, each under the shortest one, so the wide popup has no empty gaps.
+    // Whole groups (never split) go into columns filled from the right towards the left; the assignment
+    // that leaves the columns most even is chosen, so the wide popup has no empty gaps.
     _masonry() {
       if (!this._popup || this._view !== 'details') return;
       const c = this._root.querySelector('.cols');
@@ -828,15 +825,36 @@
       if (n < 2) return;
       const gs = [].slice.call(c.querySelectorAll(':scope > .grp'));
       if (!gs.length) return;
-      const hs = gs.map((g) => g.offsetHeight + 16), row = document.createElement('div');
+      const gap = 22, cw = Math.floor((c.clientWidth - gap * (n - 1)) / n);
+      gs.forEach((g) => { g.style.width = cw + 'px'; });
+      const hs = gs.map((g) => g.offsetHeight + 16);
+      gs.forEach((g) => { g.style.width = ''; });
+      const m = gs.length, asg = new Array(m).fill(0);
+      let best = null, bestA = null, count = 0;
+      const rec = (i, used, H) => {
+        if (count > 300000) return;
+        if (i === m) {
+          count++;
+          const mx = Math.max.apply(null, H), sq = H.reduce((a, h) => a + h * h, 0);
+          if (!best || mx < best[0] || (mx === best[0] && sq < best[1])) { best = [mx, sq]; bestA = asg.slice(); }
+          return;
+        }
+        for (let k = 0; k <= Math.min(used, n - 1); k++) {
+          asg[i] = k; H[k] += hs[i];
+          rec(i + 1, Math.max(used, k + 1), H);
+          H[k] -= hs[i];
+        }
+      };
+      rec(0, 0, new Array(n).fill(0));
+      if (!bestA) { // too many groups for an exhaustive search: shortest column first
+        const H = new Array(n).fill(0);
+        bestA = gs.map((g, i) => { let k = 0; for (let x = 1; x < n; x++) if (H[x] < H[k]) k = x; H[k] += hs[i]; return k; });
+      }
+      const row = document.createElement('div');
       row.className = 'mrow';
-      const cols = [], H = [];
-      for (let i = 0; i < n; i++) { const d = document.createElement('div'); d.className = 'mcol'; row.appendChild(d); cols.push(d); H.push(0); }
-      gs.forEach((g, i) => {
-        let m = 0;
-        for (let k = 1; k < n; k++) if (H[k] < H[m]) m = k;
-        cols[m].appendChild(g); H[m] += hs[i];
-      });
+      const cols = [];
+      for (let i = 0; i < n; i++) { const d = document.createElement('div'); d.className = 'mcol'; row.appendChild(d); cols.push(d); }
+      gs.forEach((g, i) => { cols[bestA[i]].appendChild(g); });
       c.appendChild(row);
     }
 

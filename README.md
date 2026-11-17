@@ -66,18 +66,6 @@ Install Alarm Keeper Card directly from the default Marketplace catalog in Home 
 6. Reload your browser to load the new resource.
 7. Add **Alarm Keeper Card** to your dashboard and configure it using the visual editor.
 
-### Alternative: Custom repository
-
-If you prefer to add the repository manually:
-
-1. Go to **Settings** > **Marketplace**.
-2. In the upper-right corner, select **Add from link**.
-3. Under **GitHub link**, enter `https://github.com/luigi-regolo/alarm-keeper-card`.
-4. Select **Add**. If the type is not detected, select **Dashboard** under **Type** and select **Add** again.
-5. Open **Alarm Keeper Card** and select **Install**.
-
-Adding a repository from a link requires a connected GitHub account. The Marketplace guides you through the connection when needed.
-
 ### Manual installation
 
 1. Download `dist/alarm-keeper-card.js` from this repository.
@@ -125,7 +113,6 @@ Alarm Keeper Card requires:
 - Home Assistant with support for custom JavaScript dashboard cards.
 - An `alarm_control_panel` entity for the alarm panel.
 - The history of the alarm entity (the Home Assistant recorder) for the clock. Without it, the clock shows only the current state.
-- Home Assistant 2026.11 or newer only when installing from the Marketplace.
 
 Supported entity types: `alarm_control_panel`, `binary_sensor` (door, garage door, window, opening, motion, occupancy, presence, tamper, battery), `sensor` (battery and station information), `switch` or `siren`, `camera`, `number` and `select`.
 

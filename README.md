@@ -1,6 +1,6 @@
 # Alarm Keeper Card
 
-[![HACS Repository](https://img.shields.io/badge/HACS-Repository-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/hacs_repository/?owner=luigi-regolo&repository=alarm-keeper-card&category=plugin)
+[![Marketplace](https://img.shields.io/badge/Marketplace-41BDF5?style=flat-square)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=luigi-regolo&repository=alarm-keeper-card&category=plugin)
 [![Release](https://img.shields.io/github/v/release/luigi-regolo/alarm-keeper-card?label=Release&style=flat-square)](https://github.com/luigi-regolo/alarm-keeper-card/releases/latest)
 [![License: GPL-3.0-only](https://img.shields.io/badge/license-GPL--3.0--only-blue?style=flat-square)](LICENSE)
 [![GitHub Stars](https://img.shields.io/github/stars/luigi-regolo/alarm-keeper-card?style=flat-square)](https://github.com/luigi-regolo/alarm-keeper-card/stargazers)
@@ -52,15 +52,31 @@ Unavailable or unknown entities are always reported as not available and never c
 
 ## Installation
 
-### HACS — Custom repository
+### Marketplace (Recommended)
 
-1. Open **HACS** in Home Assistant.
-2. Select **Custom repositories** from the menu.
-3. Enter `https://github.com/luigi-regolo/alarm-keeper-card`.
-4. Select **Dashboard** as the repository type and add it.
-5. Find **Alarm Keeper Card** in HACS and click **Download**.
-6. Reload your dashboard if necessary.
+Install Alarm Keeper Card directly from the default Marketplace catalog in Home Assistant 2026.11 or newer.
+
+[![Open Alarm Keeper Card in the Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=luigi-regolo&repository=alarm-keeper-card&category=plugin)
+
+1. Go to **Settings** > **Marketplace**.
+2. The first time, accept the notice about community content.
+3. Use **Search** to find **Alarm Keeper Card**.
+4. Open the repository page and select **Install**.
+5. Check the version in the dialog and select **Install** again to confirm.
+6. Reload your browser to load the new resource.
 7. Add **Alarm Keeper Card** to your dashboard and configure it using the visual editor.
+
+### Alternative: Custom repository
+
+If you prefer to add the repository manually:
+
+1. Go to **Settings** > **Marketplace**.
+2. In the upper-right corner, select **Add from link**.
+3. Under **GitHub link**, enter `https://github.com/luigi-regolo/alarm-keeper-card`.
+4. Select **Add**. If the type is not detected, select **Dashboard** under **Type** and select **Add** again.
+5. Open **Alarm Keeper Card** and select **Install**.
+
+Adding a repository from a link requires a connected GitHub account. The Marketplace guides you through the connection when needed.
 
 ### Manual installation
 
@@ -109,7 +125,7 @@ Alarm Keeper Card requires:
 - Home Assistant with support for custom JavaScript dashboard cards.
 - An `alarm_control_panel` entity for the alarm panel.
 - The history of the alarm entity (the Home Assistant recorder) for the clock. Without it, the clock shows only the current state.
-- HACS only when using the HACS installation method.
+- Home Assistant 2026.11 or newer only when installing from the Marketplace.
 
 Supported entity types: `alarm_control_panel`, `binary_sensor` (door, garage door, window, opening, motion, occupancy, presence, tamper, battery), `sensor` (battery and station information), `switch` or `siren`, `camera`, `number` and `select`.
 

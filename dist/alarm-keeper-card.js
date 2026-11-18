@@ -1,6 +1,7 @@
 /**
  * Alarm Keeper Card — Home Assistant dashboard card. Version 1.0
  * Copyright (c) 2026 luigi-regolo. SPDX-License-Identifier: GPL-3.0-only.
+ * Version adaptée en français québécois le 18 novembre 2026.
  * Works on the alarm_control_panel domain and on device classes, so it fits any alarm integration.
  * The alarm code is typed every time, is sent to Home Assistant and is never stored.
  * No external scripts, fonts, analytics or assets.
@@ -15,22 +16,22 @@
   /* ---------------------------------------------------------------- data */
   // Modules: every one works alone (card without the alarm panel) or together in the full card.
   const MODS = {
-    doors:     { title: 'Porte',       short: 'Porte',       icon: 'mdi:door-closed',        help: 'Sensori porta e porta garage.',                      sel: { filter: [{ domain: 'binary_sensor', device_class: ['door', 'garage_door', 'opening'] }] },            tile: true },
-    windows:   { title: 'Finestre',    short: 'Finestre',    icon: 'mdi:window-closed-variant', help: 'Sensori finestra o apertura.',                    sel: { filter: [{ domain: 'binary_sensor', device_class: ['window', 'opening'] }] },                         tile: true },
-    motion:    { title: 'Volumetrici', short: 'Volumetrici', icon: 'mdi:motion-sensor',      help: 'Sensori di movimento e presenza, con l’ultimo movimento.', sel: { filter: [{ domain: 'binary_sensor', device_class: ['motion', 'occupancy', 'presence'] }] },      tile: true },
-    batteries: { title: 'Batterie',    short: 'Batterie',    icon: 'mdi:battery',            help: 'Livello delle batterie dei dispositivi dell’allarme.', sel: { filter: [{ domain: 'sensor', device_class: 'battery' }, { domain: 'binary_sensor', device_class: 'battery' }] }, tile: true },
-    cameras:   { title: 'Telecamere',  short: 'Telecamere',  icon: 'mdi:cctv',               help: 'Telecamere opzionali, un tocco apre i dettagli.',   sel: { filter: [{ domain: 'camera' }] },                                                                        tile: true },
-    siren:     { title: 'Sirena',      short: 'Sirena',      icon: 'mdi:bullhorn-outline',   help: 'Accende e spegne la sirena, con conferma prima di attivarla.', sel: { filter: [{ domain: 'switch' }, { domain: 'siren' }] },                                   tile: true },
-    tamper:    { title: 'Manomissione', short: 'Manomissione', icon: 'mdi:shield-alert',     help: 'Sensori di manomissione.',                          sel: { filter: [{ domain: 'binary_sensor', device_class: 'tamper' }] },                                          tile: false },
-    station:   { title: 'Centrale',    short: 'Centrale',    icon: 'mdi:router-wireless',    help: 'Informazioni e stato della centrale.',              sel: { filter: [{ domain: 'sensor' }, { domain: 'binary_sensor' }] },                                          tile: false },
-    volumes:   { title: 'Volumi',      short: 'Volumi',      icon: 'mdi:volume-high',        help: 'Volume della sirena e della tastiera. Sola lettura, si modifica con il lucchetto.', sel: { filter: [{ domain: 'number' }] }, tile: false },
-    settings:  { title: 'Impostazioni', short: 'Impostazioni', icon: 'mdi:tune',             help: 'Modalità di esclusione, suoni e altre scelte.', sel: { filter: [{ domain: 'select' }] },                                                                    tile: false }
+    doors:     { title: 'Portes',       short: 'Portes',       icon: 'mdi:door-closed',        help: 'Capteurs de porte et de porte de garage.',                      sel: { filter: [{ domain: 'binary_sensor', device_class: ['door', 'garage_door', 'opening'] }] },            tile: true },
+    windows:   { title: 'Fenêtres',    short: 'Fenêtres',    icon: 'mdi:window-closed-variant', help: 'Capteurs de fenêtre ou d’ouverture.',                    sel: { filter: [{ domain: 'binary_sensor', device_class: ['window', 'opening'] }] },                         tile: true },
+    motion:    { title: 'Mouvement', short: 'Mouvement', icon: 'mdi:motion-sensor',      help: 'Capteurs de mouvement et de présence, avec l’heure du dernier mouvement.', sel: { filter: [{ domain: 'binary_sensor', device_class: ['motion', 'occupancy', 'presence'] }] },      tile: true },
+    batteries: { title: 'Batteries',    short: 'Batteries',    icon: 'mdi:battery',            help: 'Niveau de batterie des appareils du système d’alarme.', sel: { filter: [{ domain: 'sensor', device_class: 'battery' }, { domain: 'binary_sensor', device_class: 'battery' }] }, tile: true },
+    cameras:   { title: 'Caméras',  short: 'Caméras',  icon: 'mdi:cctv',               help: 'Caméras facultatives. Touchez une caméra pour voir ses détails.',   sel: { filter: [{ domain: 'camera' }] },                                                                        tile: true },
+    siren:     { title: 'Sirène',      short: 'Sirène',      icon: 'mdi:bullhorn-outline',   help: 'Active ou arrête la sirène après confirmation.', sel: { filter: [{ domain: 'switch' }, { domain: 'siren' }] },                                   tile: true },
+    tamper:    { title: 'Sabotage', short: 'Sabotage', icon: 'mdi:shield-alert',     help: 'Capteurs de sabotage.',                          sel: { filter: [{ domain: 'binary_sensor', device_class: 'tamper' }] },                                          tile: false },
+    station:   { title: 'Centrale',    short: 'Centrale',    icon: 'mdi:router-wireless',    help: 'Informations et état de la centrale.',              sel: { filter: [{ domain: 'sensor' }, { domain: 'binary_sensor' }] },                                          tile: false },
+    volumes:   { title: 'Volumes',      short: 'Volumes',      icon: 'mdi:volume-high',        help: 'Volume de la sirène et du clavier. Utilisez le cadenas pour autoriser les modifications.', sel: { filter: [{ domain: 'number' }] }, tile: false },
+    settings:  { title: 'Paramètres', short: 'Paramètres', icon: 'mdi:tune',             help: 'Mode de contournement, sons et autres options.', sel: { filter: [{ domain: 'select' }] },                                                                    tile: false }
   };
   const ROOM_MODS = ['doors', 'windows', 'motion', 'batteries', 'tamper', 'cameras'];
   const MOD_ORDER = ['doors', 'windows', 'motion', 'batteries', 'cameras', 'siren', 'tamper', 'station', 'volumes', 'settings'];
 
   const DEFAULTS = {
-    entity: '', title: 'Allarme', eyebrow: 'ALARM KEEPER CARD', show_eyebrow: true, show_title: true,
+    entity: '', title: 'Alarme', eyebrow: 'ALARM KEEPER CARD', show_eyebrow: true, show_title: true,
     panel: true, commands: true, legend: true, hands: false, width: 'center', theme_mode: 'auto'
   };
 
@@ -46,14 +47,14 @@
   const hhmm = (d) => pad(d.getHours()) + ':' + pad(d.getMinutes());
   const agoT = (ms) => {
     const m = Math.round(ms / 60000);
-    if (m < 1) return 'ora';
+    if (m < 1) return 'à l’instant';
     if (m < 60) return m + ' min';
     if (m < 1440) return Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '');
-    return Math.floor(m / 1440) + ' g';
+    return Math.floor(m / 1440) + ' j';
   };
   const durH = (h) => {
     const m = Math.round(h * 60);
-    if (m < 1) return 'meno di 1 min';
+    if (m < 1) return 'moins de 1 min';
     const H = Math.floor(m / 60), M = m % 60;
     return H ? (M ? H + ' h ' + M + ' min' : H + ' h') : M + ' min';
   };
@@ -61,15 +62,15 @@
   const nowH = () => (Date.now() - midnight()) / 3600000;
   const atText = (ts) => {
     const d = new Date(ts), n = new Date();
-    if (d.toDateString() === n.toDateString()) return 'alle ' + hhmm(d);
+    if (d.toDateString() === n.toDateString()) return 'à ' + hhmm(d);
     const y = new Date(n.getTime() - 86400000);
-    if (d.toDateString() === y.toDateString()) return 'ieri alle ' + hhmm(d);
-    return 'il ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' alle ' + hhmm(d);
+    if (d.toDateString() === y.toDateString()) return 'hier à ' + hhmm(d);
+    return 'le ' + pad(d.getDate()) + '/' + pad(d.getMonth() + 1) + ' à ' + hhmm(d);
   };
   const isNum = (v) => v !== '' && v != null && isFinite(Number(v));
 
   function normalizeConfig(raw) {
-    if (!raw || typeof raw !== 'object') throw new Error('Configurazione non valida');
+    if (!raw || typeof raw !== 'object') throw new Error('Configuration non valide');
     const c = Object.assign({}, DEFAULTS, raw);
     if (['auto', 'light', 'dark'].indexOf(c.theme_mode) < 0) c.theme_mode = 'auto';
     ['show_eyebrow', 'show_title', 'panel', 'commands', 'legend', 'hands'].forEach((k) => { c[k] = c[k] !== false && c[k] !== 'false'; });
@@ -120,7 +121,7 @@
   }
 
   function fmtState(h, s) {
-    if (!s) return 'Non trovata';
+    if (!s) return 'Introuvable';
     if (h && typeof h.formatEntityState === 'function') { try { return h.formatEntityState(s); } catch (e) { /* fall back */ } }
     const u = s.attributes && s.attributes.unit_of_measurement;
     return s.state + (u ? ' ' + u : '');
@@ -133,29 +134,29 @@
       const s = stOf(h, id), nm = nameOf(s, id), lc = s ? Date.parse(s.last_changed) : NaN;
       const since = isFinite(lc) ? agoT(now - lc) : '';
       const it = { id: id, name: nm, lv: '', icon: MODS[k].icon, sub: '', val: '' };
-      if (!s) { it.lv = 'warn'; it.sub = 'Entità non trovata'; return it; }
-      if (s.state === 'unavailable' || s.state === 'unknown') { it.lv = 'warn'; it.sub = 'Non disponibile'; it.na = true; if (k === 'cameras') it.off = true; return it; }
+      if (!s) { it.lv = 'warn'; it.sub = 'Entité introuvable'; return it; }
+      if (s.state === 'unavailable' || s.state === 'unknown') { it.lv = 'warn'; it.sub = 'Indisponible'; it.na = true; if (k === 'cameras') it.off = true; return it; }
       const on = s.state === 'on';
       if (k === 'doors' || k === 'windows') {
         const door = k === 'doors';
         it.icon = on ? (door ? 'mdi:door-open' : 'mdi:window-open-variant') : (door ? 'mdi:door-closed' : 'mdi:window-closed-variant');
         it.open = on; it.lv = on ? 'warn' : '';
-        it.sub = on ? 'Aperta' + (since ? ' da ' + since : '') : 'Chiusa' + (since ? ' · da ' + since : '');
+        it.sub = on ? 'Ouverte' + (since ? ' depuis ' + since : '') : 'Fermée' + (since ? ' · depuis ' + since : '');
       } else if (k === 'motion') {
         it.act = on; it.lv = on ? 'warn' : '';
-        it.sub = on ? 'Movimento in corso' : 'Nessun movimento' + (isFinite(lc) ? ' · ultimo ' + atText(lc) : '');
+        it.sub = on ? 'Mouvement détecté' : 'Aucun mouvement' + (isFinite(lc) ? ' · dernier mouvement ' + atText(lc) : '');
       } else if (k === 'tamper') {
-        it.tamper = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Manomissione' : 'Ok';
+        it.tamper = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Sabotage' : 'OK';
       } else if (k === 'batteries') {
-        if (s.entity_id && s.entity_id.indexOf('binary_sensor.') === 0) { it.low = on; it.lv = on ? 'warn' : ''; it.icon = on ? 'mdi:battery-alert' : 'mdi:battery'; it.sub = on ? 'Bassa' : 'Ok'; }
+        if (s.entity_id && s.entity_id.indexOf('binary_sensor.') === 0) { it.low = on; it.lv = on ? 'warn' : ''; it.icon = on ? 'mdi:battery-alert' : 'mdi:battery'; it.sub = on ? 'Faible' : 'OK'; }
         else if (isNum(s.state)) { const p = Number(s.state); it.pct = p; it.low = p < LOW_BATTERY; it.lv = it.low ? 'warn' : ''; it.icon = it.low ? 'mdi:battery-low' : 'mdi:battery'; it.sub = Math.round(p) + '%'; }
-        else { it.lv = 'warn'; it.sub = 'Valore non valido'; it.na = true; }
+        else { it.lv = 'warn'; it.sub = 'Valeur non valide'; it.na = true; }
       } else if (k === 'station') {
         it.icon = (s.attributes && s.attributes.icon) || 'mdi:router-wireless'; it.sub = fmtState(h, s);
       } else if (k === 'siren') {
-        it.on = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Attiva' : 'Spenta';
+        it.on = on; it.lv = on ? 'crit' : ''; it.sub = on ? 'Active' : 'Arrêtée';
       } else if (k === 'cameras') {
-        it.pic = s.attributes && s.attributes.entity_picture; it.off = false; it.sub = 'Attiva';
+        it.pic = s.attributes && s.attributes.entity_picture; it.off = false; it.sub = 'Active';
       } else if (k === 'volumes') {
         const a = s.attributes || {};
         let v = Number(s.state);
@@ -163,7 +164,7 @@
         it.num = v; it.min = isNum(a.min) ? Number(a.min) : 0; it.max = isNum(a.max) ? Number(a.max) : 100; it.step = isNum(a.step) && Number(a.step) > 0 ? Number(a.step) : 1; it.unit = a.unit_of_measurement || '';
         it.val = (isNum(v) ? (Math.round(v * 100) / 100) : s.state) + (it.unit ? (it.unit === '%' ? '' : ' ') + it.unit : '');
         it.icon = 'mdi:volume-high';
-        if (!isNum(v)) { it.lv = 'warn'; it.sub = 'Valore non valido'; it.na = true; }
+        if (!isNum(v)) { it.lv = 'warn'; it.sub = 'Valeur non valide'; it.na = true; }
       } else if (k === 'settings') {
         const a = s.attributes || {};
         it.options = Array.isArray(a.options) ? a.options : []; it.cur = s.state; it.icon = a.icon || 'mdi:tune';
@@ -176,48 +177,48 @@
     const n = items.length, na = items.filter((i) => i.na).length;
     if (k === 'doors' || k === 'windows') {
       const o = items.filter((i) => i.open).length;
-      if (o) return { lv: 'warn', t: o + (o === 1 ? ' aperta' : ' aperte') + ' su ' + n };
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: n === 1 ? 'Chiusa' : (k === 'doors' ? 'Tutte chiuse' : 'Tutte chiuse') };
+      if (o) return { lv: 'warn', t: o + (o === 1 ? ' ouverte' : ' ouvertes') + ' sur ' + n };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: n === 1 ? 'Fermée' : (k === 'doors' ? 'Toutes fermées' : 'Toutes fermées') };
     }
     if (k === 'motion') {
       const a = items.filter((i) => i.act).length;
-      if (a) return { lv: 'warn', t: a + (a === 1 ? ' attivo' : ' attivi') };
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: 'Nessuno' };
+      if (a) return { lv: 'warn', t: a + (a === 1 ? ' actif' : ' actifs') };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: 'Aucun' };
     }
     if (k === 'tamper') {
       const a = items.filter((i) => i.tamper).length;
-      if (a) return { lv: 'crit', t: a + (a === 1 ? ' manomissione' : ' manomissioni') };
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: 'Nessuna' };
+      if (a) return { lv: 'crit', t: a + (a === 1 ? ' sabotage' : ' sabotages') };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: 'Aucun' };
     }
     if (k === 'batteries') {
       const l = items.filter((i) => i.low).length;
-      if (l) return { lv: 'warn', t: l + (l === 1 ? ' bassa' : ' basse') };
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: 'Tutte ok' };
+      if (l) return { lv: 'warn', t: l + (l === 1 ? ' faible' : ' faibles') };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: 'Toutes OK' };
     }
     if (k === 'cameras') {
       const off = items.filter((i) => i.off).length;
-      if (off) return { lv: 'warn', t: off + (off === 1 ? ' non disponibile' : ' non disponibili') };
-      return { lv: 'ok', t: n + (n === 1 ? ' attiva' : ' attive') };
+      if (off) return { lv: 'warn', t: off + (off === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: n + (n === 1 ? ' active' : ' actives') };
     }
     if (k === 'siren') {
-      if (items.some((i) => i.on)) return { lv: 'crit', t: 'Attiva' };
-      if (na) return { lv: 'warn', t: 'Non disponibile' };
-      return { lv: 'ok', t: 'Spenta' };
+      if (items.some((i) => i.on)) return { lv: 'crit', t: 'Active' };
+      if (na) return { lv: 'warn', t: 'Indisponible' };
+      return { lv: 'ok', t: 'Arrêtée' };
     }
     if (k === 'volumes') {
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: n === 1 ? items[0].val : n + ' volumi' };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: n === 1 ? items[0].val : n + ' volumes' };
     }
     if (k === 'settings') {
-      if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-      return { lv: 'ok', t: n === 1 ? items[0].cur : n + ' impostazioni' };
+      if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+      return { lv: 'ok', t: n === 1 ? items[0].cur : n + ' paramètres' };
     }
-    if (na) return { lv: 'warn', t: na + ' non disponibil' + (na === 1 ? 'e' : 'i') };
-    return { lv: 'ok', t: n === 1 ? 'Ok' : 'Tutto ok' };
+    if (na) return { lv: 'warn', t: na + (na === 1 ? ' indisponible' : ' indisponibles') };
+    return { lv: 'ok', t: n === 1 ? 'OK' : 'Tout est OK' };
   }
 
   /* ----------------------------------------------------------------- CSS */
@@ -496,15 +497,15 @@
     _dial(mode, st) {
       const cx = 100, cy = 100, r = 84, n = nowH(), half = n >= 12 ? 1 : 0, h0 = half * 12, cfg = this._cfg;
       const meta = {
-        home: { p: SHIELD.home, l: 'In casa', o: 'var(--hc-accent)', f: '#fff' },
-        away: { p: SHIELD.away, l: 'Fuori casa', o: 'var(--hc-away)', f: '#fff' },
-        off: { p: SHIELD.off, l: 'Disinserito', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' },
-        trig: { p: SHIELD.trig, l: 'Scattato', o: 'var(--hc-crit-bg)', f: '#fff' },
-        pend: { p: SHIELD.off, l: st && st.state === 'arming' ? 'Inserimento' : st && st.state === 'pending' ? 'Ingresso' : 'Disinserimento', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' },
-        unk: { p: SHIELD.off, l: 'Non disp.', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' }
+        home: { p: SHIELD.home, l: 'À domicile', o: 'var(--hc-accent)', f: '#fff' },
+        away: { p: SHIELD.away, l: 'Absent', o: 'var(--hc-away)', f: '#fff' },
+        off: { p: SHIELD.off, l: 'Désarmé', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' },
+        trig: { p: SHIELD.trig, l: 'Déclenché', o: 'var(--hc-crit-bg)', f: '#fff' },
+        pend: { p: SHIELD.off, l: st && st.state === 'arming' ? 'Armement' : st && st.state === 'pending' ? 'Délai d’entrée' : 'Désarmement', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' },
+        unk: { p: SHIELD.off, l: 'Indisp.', o: 'var(--hc-warn-bg)', f: 'var(--hc-warn-fg)', ring: 'var(--hc-warn-bd)' }
       };
       const M = meta[mode], lc = st ? Date.parse(st.last_changed) : NaN;
-      const sub = !isFinite(lc) ? '' : (mode === 'home' || mode === 'away') ? 'dalle ' + hhmm(new Date(lc)) : mode === 'unk' ? '' : 'da ' + agoT(Date.now() - lc);
+      const sub = !isFinite(lc) ? '' : (mode === 'home' || mode === 'away') ? 'depuis ' + hhmm(new Date(lc)) : mode === 'unk' ? '' : 'depuis ' + agoT(Date.now() - lc);
       const P = (rr, p) => { const a = (p / 12 * 360 - 90) * Math.PI / 180; return [cx + rr * Math.cos(a), cy + rr * Math.sin(a)]; };
       const arc = (p0, p1, col) => {
         const A = P(r, p0), B = P(r, p1);
@@ -540,7 +541,7 @@
         '<g transform="translate(' + (cx - 12 * ks).toFixed(2) + ',' + (iy - 12 * ks).toFixed(2) + ') scale(' + ks.toFixed(3) + ')" fill="' + M.f + '"><path d="' + M.p + '"/></g>' +
         '<text x="' + cx + '" y="' + (sub ? ly : ly + 4) + '" text-anchor="middle" font-size="' + lsz + '" font-weight="700" fill="var(--hc-fg)" font-family="Roboto,Arial,sans-serif">' + M.l + '</text>' +
         (sub ? '<text x="' + cx + '" y="' + sy + '" text-anchor="middle" font-size="9.5" fill="var(--hc-muted)" font-family="Roboto,Arial,sans-serif">' + esc(sub) + '</text>' : '');
-      return '<svg class="dial' + (cfg.legend ? ' tap' : '') + '" ' + (cfg.legend ? 'data-act="leg" role="button" tabindex="0" ' : 'role="img" ') + 'aria-label="Quadrante dell’allarme: ' + M.l + '" width="200" height="200" viewBox="0 0 200 200">' + a + '</svg>';
+      return '<svg class="dial' + (cfg.legend ? ' tap' : '') + '" ' + (cfg.legend ? 'data-act="leg" role="button" tabindex="0" ' : 'role="img" ') + 'aria-label="Cadran de l’alarme : ' + M.l + '" width="200" height="200" viewBox="0 0 200 200">' + a + '</svg>';
     }
 
     _armedTotal() {
@@ -551,11 +552,11 @@
     /* ---- commands ---- */
     _cmds(mode, st) {
       const b = (cls, icon, label, act) => '<button type="button" class="cmd ' + cls + '" data-act="' + act + '" data-focus="' + act + '">' + ic(icon) + label + '</button>';
-      if (mode === 'home') return b('p', 'mdi:shield-off', 'Disattiva', 'disarm') + b('', 'mdi:shield-lock', 'Fuori casa', 'arm_away');
-      if (mode === 'away') return b('p', 'mdi:shield-off', 'Disattiva', 'disarm') + b('', 'mdi:shield-home', 'In casa', 'arm_home');
-      if (mode === 'trig') return b('c', 'mdi:shield-off', 'Disattiva', 'disarm');
-      if (mode === 'off') return b('p', 'mdi:shield-home', 'In casa', 'arm_home') + b('', 'mdi:shield-lock', 'Fuori casa', 'arm_away');
-      if (mode === 'pend') return b('p', 'mdi:shield-off', 'Disattiva', 'disarm');
+      if (mode === 'home') return b('p', 'mdi:shield-off', 'Désarmer', 'disarm') + b('', 'mdi:shield-lock', 'Absent', 'arm_away');
+      if (mode === 'away') return b('p', 'mdi:shield-off', 'Désarmer', 'disarm') + b('', 'mdi:shield-home', 'À domicile', 'arm_home');
+      if (mode === 'trig') return b('c', 'mdi:shield-off', 'Désarmer', 'disarm');
+      if (mode === 'off') return b('p', 'mdi:shield-home', 'À domicile', 'arm_home') + b('', 'mdi:shield-lock', 'Absent', 'arm_away');
+      if (mode === 'pend') return b('p', 'mdi:shield-off', 'Désarmer', 'disarm');
       return '';
     }
 
@@ -566,12 +567,12 @@
       if (!st) return;
       const needArm = !!(st.attributes && st.attributes.code_arm_required && this._needsCode(st));
       if (needArm) { this._openKeypad(act); return; }
-      this._call('alarm_control_panel', 'alarm_' + act, { entity_id: this._cfg.entity }, 'Comando non riuscito. Riprova.');
+      this._call('alarm_control_panel', 'alarm_' + act, { entity_id: this._cfg.entity }, 'La commande a échoué. Réessayez.');
     }
     _call(domain, service, data, failMsg) {
       try {
-        Promise.resolve(this._hass.callService(domain, service, data)).then(() => { /* state arrives through hass */ }, () => { this._flash(failMsg || 'Comando non riuscito.'); });
-      } catch (e) { this._flash(failMsg || 'Comando non riuscito.'); }
+        Promise.resolve(this._hass.callService(domain, service, data)).then(() => { /* state arrives through hass */ }, () => { this._flash(failMsg || 'La commande a échoué.'); });
+      } catch (e) { this._flash(failMsg || 'La commande a échoué.'); }
     }
     _flash(t) {
       this._msg = t; this._render();
@@ -598,7 +599,7 @@
       const fin = (ok) => {
         this._busy = false;
         if (ok) { this._code = ''; this._closePopup(); return; }
-        this._err = 'Codice non corretto o comando rifiutato.'; this._code = ''; this._shake = true; this._focus = 'close'; this._render(); this._shake = false;
+        this._err = 'Code incorrect ou commande refusée.'; this._code = ''; this._shake = true; this._focus = 'close'; this._render(); this._shake = false;
       };
       try { Promise.resolve(this._hass.callService('alarm_control_panel', 'alarm_' + act, data)).then(() => fin(true), () => fin(false)); } catch (e) { fin(false); }
     }
@@ -636,17 +637,17 @@
     _section(k) { return this._itemsHTML(k, this._items(k)); }
     _itemsHTML(k, items) {
       if (k === 'cameras') {
-        return '<div class="cams">' + items.map((it) => '<button type="button" class="cam" data-act="cam" data-id="' + esc(it.id) + '" aria-label="' + esc(it.name) + '">' + (it.pic && !it.off ? '<img src="' + esc(it.pic) + '" alt="" loading="lazy">' : ic('mdi:cctv')) + '<span class="lv ' + (it.off ? 'off' : '') + '"><i></i>' + (it.off ? 'OFFLINE' : 'LIVE') + '</span><span class="n">' + esc(it.name) + '</span></button>').join('') + '</div>';
+        return '<div class="cams">' + items.map((it) => '<button type="button" class="cam" data-act="cam" data-id="' + esc(it.id) + '" aria-label="' + esc(it.name) + '">' + (it.pic && !it.off ? '<img src="' + esc(it.pic) + '" alt="" loading="lazy">' : ic('mdi:cctv')) + '<span class="lv ' + (it.off ? 'off' : '') + '"><i></i>' + (it.off ? 'HORS LIGNE' : 'EN DIRECT') + '</span><span class="n">' + esc(it.name) + '</span></button>').join('') + '</div>';
       }
       return items.map((it) => {
-        if (k === 'siren') return this._row(it, '<button type="button" class="sw crit ' + (it.on ? 'on' : '') + '" data-act="siren" data-id="' + esc(it.id) + '" aria-label="Sirena ' + esc(it.name) + '" ' + (it.na ? 'disabled' : '') + '></button>');
+        if (k === 'siren') return this._row(it, '<button type="button" class="sw crit ' + (it.on ? 'on' : '') + '" data-act="siren" data-id="' + esc(it.id) + '" aria-label="Sirène ' + esc(it.name) + '" ' + (it.na ? 'disabled' : '') + '></button>');
         if (k === 'volumes') {
           if (it.na) return this._row(it);
           const unl = !!this._vunl[it.id];
-          const lkb = '<button type="button" class="rl ' + (unl ? 'open' : '') + '" data-act="vlock" data-id="' + esc(it.id) + '" data-focus="vl-' + esc(it.id) + '" aria-label="' + (unl ? 'Blocca la modifica di ' : 'Sblocca la modifica di ') + esc(it.name) + '">' + ic(unl ? 'mdi:lock-open-variant' : 'mdi:lock') + '</button>';
+          const lkb = '<button type="button" class="rl ' + (unl ? 'open' : '') + '" data-act="vlock" data-id="' + esc(it.id) + '" data-focus="vl-' + esc(it.id) + '" aria-label="' + (unl ? 'Verrouiller le réglage de ' : 'Déverrouiller le réglage de ') + esc(it.name) + '">' + ic(unl ? 'mdi:lock-open-variant' : 'mdi:lock') + '</button>';
           if (!unl) return this._row(Object.assign({}, it, { sub: '' }), '<strong class="vv">' + esc(it.val) + '</strong>' + lkb);
           const dl = Math.max(it.step, Math.round(((it.max - it.min) / 10) / it.step) * it.step);
-          return this._row(Object.assign({}, it, { sub: '' }), '<div class="stp"><button type="button" data-act="vol" data-focus="vm-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + (-dl) + '" aria-label="Diminuisci ' + esc(it.name) + '" ' + (it.num <= it.min ? 'disabled' : '') + '>−</button><strong>' + esc(it.val) + '</strong><button type="button" data-act="vol" data-focus="vp-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + dl + '" aria-label="Aumenta ' + esc(it.name) + '" ' + (it.num >= it.max ? 'disabled' : '') + '>+</button></div>' + lkb);
+          return this._row(Object.assign({}, it, { sub: '' }), '<div class="stp"><button type="button" data-act="vol" data-focus="vm-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + (-dl) + '" aria-label="Diminuer ' + esc(it.name) + '" ' + (it.num <= it.min ? 'disabled' : '') + '>−</button><strong>' + esc(it.val) + '</strong><button type="button" data-act="vol" data-focus="vp-' + esc(it.id) + '" data-id="' + esc(it.id) + '" data-d="' + dl + '" aria-label="Augmenter ' + esc(it.name) + '" ' + (it.num >= it.max ? 'disabled' : '') + '>+</button></div>' + lkb);
         }
         if (k === 'settings') {
           if (it.na || !it.options.length) return this._row(Object.assign({}, it, { sub: it.na ? it.sub : it.cur }));
@@ -662,7 +663,7 @@
     _groupsHTML(filter) {
       const mods = this._mods();
       let b = '';
-      const none = () => '<div class="grp"><div class="rh"><span>Tutto in ordine</span><em class="o">nessuna segnalazione</em></div>' + this._row({ lv: '', icon: 'mdi:check', name: 'Nessuna segnalazione', sub: 'Ok' }) + '</div>';
+      const none = () => '<div class="grp"><div class="rh"><span>Tout est en ordre</span><em class="o">aucune alerte</em></div>' + this._row({ lv: '', icon: 'mdi:check', name: 'Aucune alerte', sub: 'OK' }) + '</div>';
       if (this._gv === 'room' && this._hasRooms()) {
         const bk = {};
         mods.forEach((k) => this._items(k).forEach((it) => {
@@ -674,7 +675,7 @@
         if (!keys.length && !bk['']) return none();
         const grp = (title, g, lock, first) => {
           const ord = mods.filter((k) => g.mods[k]).sort((x, y) => (x === first ? -1 : 0) - (y === first ? -1 : 0)), all = [].concat.apply([], ord.map((k) => g.mods[k])), bad = all.filter((i) => i.lv);
-          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + '' + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' in attenzione' : 'Tutto ok') + '</em></div>' +
+          return '<div class="grp"><div class="rh"><span>' + esc(title) + '</span>' + '' + '<em class="' + (bad.some((i) => i.lv === 'crit') ? 'c' : bad.length ? 'w' : 'o') + '">' + (bad.length ? bad.length + ' à vérifier' : 'Tout est OK') + '</em></div>' +
             ord.map((k) => filter === 'v' ? g.mods[k].map((i) => this._row(i)).join('') : this._itemsHTML(k, g.mods[k])).join('') + '</div>';
         };
         keys.forEach((key) => { b += grp(bk[key].name, bk[key], !!bk[key].mods.volumes && filter !== 'v'); });
@@ -704,7 +705,7 @@
           const L = this._items(k).filter((i) => i.lv);
           if (!L.length) return;
           any = true;
-          b += '<div class="grp"><div class="rh"><span>' + esc(MODS[k].title) + '</span><em class="' + (L.some((i) => i.lv === 'crit') ? 'c' : 'w') + '">' + L.length + ' in attenzione</em></div>' + L.map((i) => this._row(i)).join('') + '</div>';
+          b += '<div class="grp"><div class="rh"><span>' + esc(MODS[k].title) + '</span><em class="' + (L.some((i) => i.lv === 'crit') ? 'c' : 'w') + '">' + L.length + ' à vérifier</em></div>' + L.map((i) => this._row(i)).join('') + '</div>';
         });
         return any ? b : none();
       }
@@ -716,38 +717,38 @@
     }
 
     _popupHTML() {
-      const x = '<button type="button" class="x" data-act="close" data-focus="close" aria-label="Chiudi">' + ic('mdi:close') + '</button>';
+      const x = '<button type="button" class="x" data-act="close" data-focus="close" aria-label="Fermer">' + ic('mdi:close') + '</button>';
       const st = stOf(this._hass, this._cfg.entity);
       if (this._view === 'details') {
-        const chips = '<div class="chips"><button type="button" class="chip" data-filter="v" aria-pressed="' + (this._filter === 'v') + '" data-focus="fv">Attenzione</button><button type="button" class="chip" data-filter="a" aria-pressed="' + (this._filter === 'a') + '" data-focus="fa">Tutti</button></div>';
-        return '<dialog class="ov" data-act="ovclose" aria-label="Dettagli e stato"><div class="dlg"><div class="mh"><h2 class="mt">Dettagli e stato</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></dialog>';
+        const chips = '<div class="chips"><button type="button" class="chip" data-filter="v" aria-pressed="' + (this._filter === 'v') + '" data-focus="fv">À vérifier</button><button type="button" class="chip" data-filter="a" aria-pressed="' + (this._filter === 'a') + '" data-focus="fa">Tous</button></div>';
+        return '<dialog class="ov" data-act="ovclose" aria-label="Détails et état"><div class="dlg"><div class="mh"><h2 class="mt">Détails et état</h2>' + x + '</div><div class="mb"><div class="cols">' + chips + this._groupsHTML(this._filter) + '</div></div></div></dialog>';
       }
       if (this._view === 'siren') {
         const so = !!this._sirenOff;
-        return '<dialog class="ov" data-act="ovclose" aria-label="' + (so ? 'Spegnere la sirena' : 'Attivare la sirena') + '"><div class="dlg small"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>' + (so ? 'Spegnere la sirena?' : 'Attivare la sirena?') + '</h3><p>' + (so ? 'La sirena verrà spenta subito.' : 'La sirena suonerà subito. Potrai spegnerla da qui.') + '</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annulla</button><button type="button" class="cmd ' + (so ? 'p' : 'c') + '" data-act="siren-yes" data-focus="yes">' + (so ? 'Spegni sirena' : 'Attiva sirena') + '</button></div></div></div></dialog>';
+        return '<dialog class="ov" data-act="ovclose" aria-label="' + (so ? 'Arrêter la sirène' : 'Activer la sirène') + '"><div class="dlg small"><div class="cf"><div class="wi">' + ic('mdi:bullhorn-outline') + '</div><h3>' + (so ? 'Arrêter la sirène?' : 'Activer la sirène?') + '</h3><p>' + (so ? 'La sirène s’arrêtera immédiatement.' : 'La sirène retentira immédiatement. Vous pourrez l’arrêter ici.') + '</p><div class="cmds"><button type="button" class="cmd" data-act="close" data-focus="close">Annuler</button><button type="button" class="cmd ' + (so ? 'p' : 'c') + '" data-act="siren-yes" data-focus="yes">' + (so ? 'Arrêter la sirène' : 'Activer la sirène') + '</button></div></div></div></dialog>';
       }
       // keypad
       const mode = alarmMode(st ? st.state : ''), need = this._needsCode(st), text = st && st.attributes && st.attributes.code_format === 'text';
-      const lab = { home: 'In casa', away: 'Fuori casa', off: 'Disinserito', trig: 'Allarme scattato', pend: 'In corso', unk: 'Non disponibile' }[mode];
-      const after = { disarm: 'Disinserito', arm_home: 'In casa', arm_away: 'Fuori casa' }[this._act];
+      const lab = { home: 'À domicile', away: 'Absent', off: 'Désarmé', trig: 'Alarme déclenchée', pend: 'En cours', unk: 'Indisponible' }[mode];
+      const after = { disarm: 'Désarmé', arm_home: 'À domicile', arm_away: 'Absent' }[this._act];
       const orbBg = mode === 'trig' ? 'var(--hc-crit-bg)' : mode === 'away' ? 'var(--hc-away)' : mode === 'off' || mode === 'pend' || mode === 'unk' ? 'var(--hc-warn-bg)' : 'var(--hc-accent)';
       const orbFg = mode === 'off' || mode === 'pend' || mode === 'unk' ? 'var(--hc-warn-fg)' : '#fff';
       const sh = SHIELD[mode === 'unk' || mode === 'pend' ? 'off' : mode];
       const dots = Math.max(4, this._code.length);
       const sz = this._wide() ? ' small' : '';
       let input;
-      if (text) input = '<input class="code" type="password" id="code" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Codice" value="' + esc(this._code) + '" data-focus="code">';
+      if (text) input = '<input class="code" type="password" id="code" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Code" value="' + esc(this._code) + '" data-focus="code">';
       else input = '<div class="dotrow"><div class="dots ' + (this._shake ? 'shake' : '') + '" id="dots">' + Array.from({ length: dots }, (_, i) => '<i class="' + (i < this._code.length ? 'f' : '') + '"></i>').join('') + '</div></div>';
       const kb = (k) => '<button type="button" data-act="key" data-k="' + k + '" aria-label="' + k + '"><b>' + k + '</b></button>';
-      const keys = text ? '' : '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(kb).join('') + '<span></span>' + kb(0) + '<button type="button" class="bk" data-act="back" aria-label="Cancella l’ultima cifra" ' + (this._code ? '' : 'disabled') + '>' + ic('mdi:backspace-outline') + '</button></div>';
-      const label = this._act === 'disarm' ? 'Disattiva allarme' : this._act === 'arm_home' ? 'Inserisci in casa' : 'Inserisci fuori casa';
-      return '<dialog class="ov" data-act="ovclose" aria-label="Allarme"><div class="dlg' + sz + '"><div class="mh"><h2 class="mt">Allarme</h2>' + x + '</div><div class="mb">' +
-        '<div class="abig"><div class="orb" style="background:' + orbBg + ';color:' + orbFg + '"><svg viewBox="0 0 24 24"><path fill="currentColor" d="' + sh + '"/></svg></div><div><div class="vt">' + lab + '</div><div class="vs">' + esc(this._cfg.title || 'Allarme') + '</div></div></div>' +
-        '<div class="ast"><div><span>Ora</span><b>' + lab + '</b></div><div><span>Dopo il comando</span><b>' + after + '</b></div></div>' +
-        (need ? '<div class="lbl">Codice richiesto</div>' : '<div class="warnt">Nessun codice impostato in Home Assistant: il tastierino non verifica nulla.</div>') +
+      const keys = text ? '' : '<div class="keys">' + [1, 2, 3, 4, 5, 6, 7, 8, 9].map(kb).join('') + '<span></span>' + kb(0) + '<button type="button" class="bk" data-act="back" aria-label="Effacer le dernier chiffre" ' + (this._code ? '' : 'disabled') + '>' + ic('mdi:backspace-outline') + '</button></div>';
+      const label = this._act === 'disarm' ? 'Désarmer l’alarme' : this._act === 'arm_home' ? 'Armer en mode À domicile' : 'Armer en mode Absent';
+      return '<dialog class="ov" data-act="ovclose" aria-label="Alarme"><div class="dlg' + sz + '"><div class="mh"><h2 class="mt">Alarme</h2>' + x + '</div><div class="mb">' +
+        '<div class="abig"><div class="orb" style="background:' + orbBg + ';color:' + orbFg + '"><svg viewBox="0 0 24 24"><path fill="currentColor" d="' + sh + '"/></svg></div><div><div class="vt">' + lab + '</div><div class="vs">' + esc(this._cfg.title || 'Alarme') + '</div></div></div>' +
+        '<div class="ast"><div><span>Maintenant</span><b>' + lab + '</b></div><div><span>Après la commande</span><b>' + after + '</b></div></div>' +
+        (need ? '<div class="lbl">Code requis</div>' : '<div class="warnt">Aucun code configuré dans Home Assistant. Le clavier ne peut pas vérifier le code.</div>') +
         input + '<div class="err" id="err" role="alert">' + esc(this._err) + '</div>' + keys +
-        '<button type="button" class="acta' + (this._act === 'disarm' && mode === 'trig' ? ' c' : '') + '" data-act="submit" data-focus="submit" ' + ((need && !this._code) || this._busy ? 'disabled' : '') + '>' + (this._busy ? 'Invio…' : label) + '</button>' +
-        '<div class="note" style="text-align:center;margin-top:10px">Il codice si digita ogni volta e non viene mai salvato. Lo verifica Home Assistant.</div></div></div></dialog>';
+        '<button type="button" class="acta' + (this._act === 'disarm' && mode === 'trig' ? ' c' : '') + '" data-act="submit" data-focus="submit" ' + ((need && !this._code) || this._busy ? 'disabled' : '') + '>' + (this._busy ? 'Envoi…' : label) + '</button>' +
+        '<div class="note" style="text-align:center;margin-top:10px">Saisissez votre code chaque fois. Home Assistant le vérifie. La carte ne le conserve jamais.</div></div></div></dialog>';
     }
 
     _render() {
@@ -773,17 +774,17 @@
       const dtlInHead = !!(hasHead && cfg.panel && mods.length);
       if (hasHead) {
         const ht = (cfg.show_eyebrow && cfg.eyebrow ? '<div class="eye">' + esc(cfg.eyebrow) + '</div>' : '') + (cfg.show_title && cfg.title ? '<div class="title" role="heading" aria-level="2">' + esc(cfg.title) + '<b>.</b></div>' : '');
-        h += dtlInHead ? '<div class="head hb"><div class="ht">' + ht + '</div><button type="button" class="detail dtl" data-act="details" data-focus="details" aria-label="Dettagli e stato" title="Dettagli e stato">' + ic('mdi:chevron-right') + '</button></div>' : '<div class="head">' + ht + '</div>';
+        h += dtlInHead ? '<div class="head hb"><div class="ht">' + ht + '</div><button type="button" class="detail dtl" data-act="details" data-focus="details" aria-label="Détails et état" title="Détails et état">' + ic('mdi:chevron-right') + '</button></div>' : '<div class="head">' + ht + '</div>';
       }
       if (cfg.panel) {
         const st = cfg.entity ? stOf(hass, cfg.entity) : null;
-        if (!cfg.entity) h += '<div class="panel"><div class="empty">Scegli l’entità dell’allarme dalla configurazione della card.</div></div>';
+        if (!cfg.entity) h += '<div class="panel"><div class="empty">Choisissez l’entité d’alarme dans la configuration de la carte.</div></div>';
         else {
           const mode = alarmMode(st ? st.state : '');
           h += '<div class="panel has-dial">' + this._dial(mode, st) + (cfg.commands ? '<div class="cmds">' + this._cmds(mode, st) + '</div>' : '') + '';
           if (this._leg && cfg.legend) {
             const n = nowH();
-            h += '<div class="leg" data-act="leg"><b>Oggi inserito ' + durH(this._armedTotal()) + '</b><div class="l"><span><i style="background:var(--hc-accent)"></i>In casa</span><span><i style="background:var(--hc-away)"></i>Fuori casa</span><span><i style="background:var(--hc-warn-bd)"></i>Non inserito</span></div><p>Quadrante da 12 ore: ora mostra ' + (n >= 12 ? 'il pomeriggio (12–24)' : 'la mattina (0–12)') + '.' + (this._histOk ? '' : ' Storico non disponibile: mostro solo lo stato attuale.') + '</p></div>';
+            h += '<div class="leg" data-act="leg"><b>Durée d’armement aujourd’hui : ' + durH(this._armedTotal()) + '</b><div class="l"><span><i style="background:var(--hc-accent)"></i>À domicile</span><span><i style="background:var(--hc-away)"></i>Absent</span><span><i style="background:var(--hc-warn-bd)"></i>Désarmé</span></div><p>Le cadran de 12 heures affiche actuellement ' + (n >= 12 ? 'la période de midi à minuit' : 'la période de minuit à midi') + '.' + (this._histOk ? '' : ' Historique indisponible. Seul l’état actuel est affiché.') + '</p></div>';
           }
           h += '</div>';
         }
@@ -794,9 +795,9 @@
             return '<button type="button" class="tile ' + (s.lv === 'ok' ? '' : s.lv) + '" data-act="' + (k === 'siren' ? 'siren-tile' : 'tile') + '" data-m="' + k + '" data-focus="tile-' + k + '"><div class="ico">' + ic(MODS[k].icon) + '</div><div class="t"><div class="rn">' + esc(MODS[k].short) + '</div></div><div class="rs st">' + esc(s.t) + '</div>' + ic('mdi:chevron-right', ' class="chev"') + '</button>';
           }).join('') + new Array((3 - (tiles.length % 3)) % 3 + 1).join('<span class="tile ph" aria-hidden="true"></span>') + '</div>';
         }
-        if (mods.length && !dtlInHead) h += '<button type="button" class="detail" data-act="details" data-focus="details">Dettagli e stato ' + ic('mdi:chevron-right') + '</button>';
+        if (mods.length && !dtlInHead) h += '<button type="button" class="detail" data-act="details" data-focus="details">Détails et état ' + ic('mdi:chevron-right') + '</button>';
       } else {
-        if (!mods.length) h += '<div class="empty">Nessun modulo con entità: scegli le entità dalla configurazione della card.</div>';
+        if (!mods.length) h += '<div class="empty">Aucun module avec des entités. Choisissez les entités dans la configuration de la carte.</div>';
         mods.forEach((k) => {
           h += (mods.length > 1 ? '<div class="lab">' + esc(MODS[k].title) + '</div>' : '') + this._section(k);
         });
@@ -904,7 +905,7 @@
         const v = Math.max(mn, Math.min(mx, Math.round((base + Number(t.dataset.d)) * 1000) / 1000));
         this._volPend[id] = v; this._sig = null; this._focus = t.dataset.focus || '';
         window.setTimeout(() => { if (this._volPend[id] === v) { delete this._volPend[id]; this._sig = null; if (this._popup || this._cfg) this._render(); } }, 4000);
-        this._call('number', 'set_value', { entity_id: id, value: v }, 'Volume non modificato.');
+        this._call('number', 'set_value', { entity_id: id, value: v }, 'Le volume n’a pas été modifié.');
         this._render(); return;
       }
       if (a === 'siren-tile' || a === 'siren') {
@@ -914,12 +915,12 @@
         this._openSiren(id);
         return;
       }
-      if (a === 'siren-yes') { const id = this._sirenId, off = this._sirenOff; this._closePopup(true); this._call(id.split('.')[0], off ? 'turn_off' : 'turn_on', { entity_id: id }, off ? 'Sirena non spenta.' : 'Sirena non attivata.'); return; }
+      if (a === 'siren-yes') { const id = this._sirenId, off = this._sirenOff; this._closePopup(true); this._call(id.split('.')[0], off ? 'turn_off' : 'turn_on', { entity_id: id }, off ? 'La sirène n’a pas été arrêtée.' : 'La sirène n’a pas été activée.'); return; }
       if (a === 'cam') { const id = t.dataset.id; if (this._popup) this._closePopup(true); this.dispatchEvent(new CustomEvent('hass-more-info', { detail: { entityId: id }, bubbles: true, composed: true })); }
     }
     _change(e) {
       const el = e.target;
-      if (el && el.dataset && el.dataset.sel) this._call('select', 'select_option', { entity_id: el.dataset.sel, option: el.value }, 'Impostazione non modificata.');
+      if (el && el.dataset && el.dataset.sel) this._call('select', 'select_option', { entity_id: el.dataset.sel, option: el.value }, 'Le paramètre n’a pas été modifié.');
       if (el && el.id === 'code') { this._code = el.value; this._err = ''; }
     }
     _key(e) {
@@ -1016,21 +1017,21 @@ button,input,select{font:inherit;color:inherit}
     _check(id, label, help, on) { return '<div class="row"><label for="' + id + '">' + esc(label) + (help ? '<div class="muted">' + esc(help) + '</div>' : '') + '</label><input type="checkbox" id="' + id + '" ' + (on ? 'checked' : '') + '></div>'; }
 
     _allarme(n) {
-      return '<div class="heading">Allarme</div><div class="desc">Scegli la centrale e come si presenta il pannello. Il codice non viene mai salvato nella card: lo digiti ogni volta e lo verifica Home Assistant.</div>' +
-        this._field('Entità allarme', '<div data-slot="entity"></div>', 'Qualsiasi entità del dominio alarm_control_panel.') +
-        this._check('panel', 'Pannello allarme', 'Quadrante con le ore di oggi, comandi e riquadri. Spento: la card mostra solo i moduli scelti.', n.panel) +
-        this._check('commands', 'Comandi attivi', 'Pulsanti In casa, Fuori casa e Disattiva. Spenti: il pannello resta in sola lettura.', n.commands) +
-        this._check('legend', 'Legenda al tocco', 'Toccando il quadrante compaiono i colori e il totale di oggi.', n.legend) +
-        this._check('hands', 'Lancette', 'Spente di default: il punto sul bordo segna già l’ora attuale.', n.hands);
+      return '<div class="heading">Alarme</div><div class="desc">Choisissez l’entité d’alarme et les éléments à afficher. Saisissez votre code chaque fois. Home Assistant le vérifie et la carte ne le conserve jamais.</div>' +
+        this._field('Entité d’alarme', '<div data-slot="entity"></div>', 'Toute entité du domaine alarm_control_panel.') +
+        this._check('panel', 'Panneau d’alarme', 'Affiche le cadran du jour, les commandes et les tuiles. Désactivez cette option pour afficher uniquement les modules choisis.', n.panel) +
+        this._check('commands', 'Activer les commandes', 'Boutons À domicile, Absent et Désarmer. Désactivez cette option pour laisser le panneau en lecture seule.', n.commands) +
+        this._check('legend', 'Légende au toucher', 'Touchez le cadran pour voir la légende et la durée totale d’armement aujourd’hui.', n.legend) +
+        this._check('hands', 'Aiguilles', 'Masquées par défaut. Le point sur le bord indique déjà l’heure actuelle.', n.hands);
     }
     _moduli(n) {
-      let h = '<div class="heading">Moduli</div><div class="desc">Scegli le entità di ogni modulo dai selettori. Un modulo senza entità non compare. Ogni modulo funziona anche da solo: per averne uno solo su una card, spegni il pannello allarme e lascia attivo solo quel modulo.</div>';
+      let h = '<div class="heading">Modules</div><div class="desc">Choisissez les entités de chaque module. Un module sans entités reste masqué. Pour afficher un seul module, désactivez le panneau d’alarme et laissez uniquement ce module actif.</div>';
       n.order.forEach((k, i) => {
         const m = n.modules[k];
-        h += '<div class="mod"><div class="mh"><div class="nm">' + esc(MODS[k].title) + '</div><div class="ctl"><button type="button" class="action" data-move="' + i + ':-1" aria-label="Sposta su ' + esc(MODS[k].title) + '" ' + (i === 0 ? 'disabled' : '') + '>↑</button><button type="button" class="action" data-move="' + i + ':1" aria-label="Sposta giù ' + esc(MODS[k].title) + '" ' + (i === n.order.length - 1 ? 'disabled' : '') + '>↓</button></div></div>' +
+        h += '<div class="mod"><div class="mh"><div class="nm">' + esc(MODS[k].title) + '</div><div class="ctl"><button type="button" class="action" data-move="' + i + ':-1" aria-label="Monter ' + esc(MODS[k].title) + '" ' + (i === 0 ? 'disabled' : '') + '>↑</button><button type="button" class="action" data-move="' + i + ':1" aria-label="Descendre ' + esc(MODS[k].title) + '" ' + (i === n.order.length - 1 ? 'disabled' : '') + '>↓</button></div></div>' +
           '<div class="muted" style="margin-top:6px">' + esc(MODS[k].help) + '</div>' +
-          '<div class="mb"><div class="chk"><input type="checkbox" id="on-' + k + '" data-on="' + k + '" ' + (m.on ? 'checked' : '') + '><label for="on-' + k + '">Modulo attivo</label></div>' +
-          (n.panel ? '<div class="chk"><input type="checkbox" id="tile-' + k + '" data-tile="' + k + '" ' + (m.tile ? 'checked' : '') + '><label for="tile-' + k + '">Riga nell’elenco della card</label></div>' : '') +
+          '<div class="mb"><div class="chk"><input type="checkbox" id="on-' + k + '" data-on="' + k + '" ' + (m.on ? 'checked' : '') + '><label for="on-' + k + '">Module actif</label></div>' +
+          (n.panel ? '<div class="chk"><input type="checkbox" id="tile-' + k + '" data-tile="' + k + '" ' + (m.tile ? 'checked' : '') + '><label for="tile-' + k + '">Afficher une tuile dans la carte</label></div>' : '') +
           '<div data-slot="mod-' + k + '"></div>' + this._roomPick(k, m) + '</div></div>';
       });
       return h;
@@ -1053,16 +1054,16 @@ button,input,select{font:inherit;color:inherit}
     _roomPick(k, m) {
       const rs = this._roomsFor(k, m);
       if (!rs.length) return '';
-      return '<div class="field"><div class="label">Aggiungi da stanza</div><select class="input" data-room="' + k + '"><option value="">Scegli una stanza…</option>' + rs.map((r) => '<option value="' + esc(r.id) + '">' + esc(r.name) + ' (' + r.ids.length + ')</option>').join('') + '</select><div class="tiny">Aggiunge i dispositivi compatibili di quella stanza. Puoi sempre toglierne qualcuno dal selettore.</div></div>';
+      return '<div class="field"><div class="label">Ajouter depuis une pièce</div><select class="input" data-room="' + k + '"><option value="">Choisir une pièce…</option>' + rs.map((r) => '<option value="' + esc(r.id) + '">' + esc(r.name) + ' (' + r.ids.length + ')</option>').join('') + '</select><div class="tiny">Ajoute les appareils compatibles de la pièce. Vous pouvez retirer des entités dans le sélecteur.</div></div>';
     }
     _aspetto(n) {
-      return '<div class="heading">Aspetto</div>' +
-        this._field('Intestazione superiore', '<input class="input" type="text" id="eyebrow" maxlength="60" value="' + esc(n.eyebrow) + '">') +
-        this._field('Titolo', '<input class="input" type="text" id="title" maxlength="60" value="' + esc(n.title) + '">', 'Il punto verde finale lo aggiunge la card.') +
-        this._check('show-eyebrow', 'Mostra intestazione superiore', '', n.show_eyebrow) +
-        this._check('show-title', 'Mostra titolo', '', n.show_title) +
-        this._check('cw', 'Tutta la larghezza disponibile su tablet e desktop', 'Se è disattivato la card resta stretta (460 px) al centro.', n.width === 'full') +
-        this._field('Tema', '<select class="input" id="theme">' + [['auto', 'Automatico (Home Assistant)'], ['light', 'Light Edera'], ['dark', 'Dark Edera']].map((o) => '<option value="' + o[0] + '" ' + (n.theme_mode === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>');
+      return '<div class="heading">Apparence</div>' +
+        this._field('Surtitre', '<input class="input" type="text" id="eyebrow" maxlength="60" value="' + esc(n.eyebrow) + '">') +
+        this._field('Titre', '<input class="input" type="text" id="title" maxlength="60" value="' + esc(n.title) + '">', 'La carte ajoute le point vert à la fin du titre.') +
+        this._check('show-eyebrow', 'Afficher le surtitre', '', n.show_eyebrow) +
+        this._check('show-title', 'Afficher le titre', '', n.show_title) +
+        this._check('cw', 'Utiliser toute la largeur sur tablette et ordinateur', 'Si cette option est désactivée, la carte demeure centrée et limitée à 460 px.', n.width === 'full') +
+        this._field('Thème', '<select class="input" id="theme">' + [['auto', 'Automatique (Home Assistant)'], ['light', 'Edera clair'], ['dark', 'Edera sombre']].map((o) => '<option value="' + o[0] + '" ' + (n.theme_mode === o[0] ? 'selected' : '') + '>' + o[1] + '</option>').join('') + '</select>');
     }
     _mount(slot, selector, value, cb) {
       const el = document.createElement('ha-selector');
@@ -1073,8 +1074,8 @@ button,input,select{font:inherit;color:inherit}
     _render() {
       const n = this._norm(), t = this._tab;
       const act = this.shadowRoot.activeElement ? this.shadowRoot.activeElement.id : '';
-      this.shadowRoot.innerHTML = '<style>' + EDITOR_CSS + '</style><div class="ed"><div class="tabs" role="group" aria-label="Sezioni">' +
-        [['allarme', 'Allarme'], ['moduli', 'Moduli'], ['aspetto', 'Aspetto']].map((a) => '<button type="button" class="tab" data-tab="' + a[0] + '" id="t-' + a[0] + '" aria-pressed="' + (t === a[0]) + '">' + a[1] + '</button>').join('') + '</div>' +
+      this.shadowRoot.innerHTML = '<style>' + EDITOR_CSS + '</style><div class="ed"><div class="tabs" role="group" aria-label="Sections">' +
+        [['allarme', 'Alarme'], ['moduli', 'Modules'], ['aspetto', 'Apparence']].map((a) => '<button type="button" class="tab" data-tab="' + a[0] + '" id="t-' + a[0] + '" aria-pressed="' + (t === a[0]) + '">' + a[1] + '</button>').join('') + '</div>' +
         (t === 'allarme' ? this._allarme(n) : t === 'moduli' ? this._moduli(n) : this._aspetto(n)) + '</div>';
       this._built = true;
       const sl = (name) => this.shadowRoot.querySelector('[data-slot="' + name + '"]');
@@ -1119,7 +1120,7 @@ button,input,select{font:inherit;color:inherit}
   if (!customElements.get(EDITOR_TAG)) customElements.define(EDITOR_TAG, AlarmKeeperCardEditor);
   window.customCards = window.customCards || [];
   if (!window.customCards.some((c) => c.type === TAG)) {
-    window.customCards.push({ type: TAG, name: 'Alarm Keeper Card', description: 'Modular alarm card: 12-hour activity clock, code-protected disarming, siren confirmation and optional sensors, cameras, volumes and settings.', preview: true });
+    window.customCards.push({ type: TAG, name: 'Alarm Keeper Card', description: 'Carte d’alarme modulaire avec cadran de 12 heures, désarmement par code, confirmation pour la sirène et modules facultatifs pour les capteurs, les caméras, les volumes et les paramètres.', preview: true });
   }
   // eslint-disable-next-line no-console
   console.info('%c ALARM-KEEPER-CARD %c ' + VERSION + ' ', 'color:#fff;background:#0a7156;font-weight:700', 'color:#0a7156;background:#fff');
